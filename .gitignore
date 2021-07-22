@@ -3,3 +3,11 @@ PerlSwissEph-2.10.tar.gz
 fix_selinux
 mk_so_wwx
 sweperl.memo
+MYMETA.json
+MYMETA.yml
+Makefile
+SwissEph.bs
+SwissEph.c
+SwissEph.o
+blib/
+pm_to_blib
