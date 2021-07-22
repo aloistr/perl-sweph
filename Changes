@@ -1,0 +1,71 @@
+Revision history for Perl extension SwissEph.
+
+First created on 3 April 2009, with Swiss Ephemeris 1.76.
+
+Updated on 27 January 2011:
+- Function swe_utc_time_zone() added for Swiss Ephemeris 1.77
+- Delta t updated
+- Fixed stars: algorithm in swe_fixstar() was improved, new input file sefstars.txt was created
+
+Updated on 7 September 2012:
+- Precession algorithm was updated
+- Function swe_rise_trans_true_hor() added for Swiss Ephemeris 1.78
+- several minor bug fixes (see documentation swephprg.pdf)
+
+Updated on 23 April 2013, Swiss Ephemeris 1.79
+- Improved precision in eclipse calculations: 2nd and 3rd contact with solar eclipses, penumbral and partial phases with lunar eclipses. 
+- Bug fix in function swe_sol_eclipse_when_loc().If the local maximum eclipse occurs at sunset or sunrise, tret[0] now gives the moment when the lower limb of the Sun touches the horizon. This was not correctly implemented in former versions
+- Bug fix in Perl functions swe_house() etc. These functions had crashed with a segmention violation if called with the house parameter ‘G’.
+- Bug fix in Perl function swe_utc_to_jd(), where gregflag had been read from the 4th instead of the 6th parameter.
+- Bug fix in Perl functions to do with date conversion. The default mechanism for gregflag was buggy.  
+- For Hindu astrologers, some more ayanamshas were added that are related to Suryasiddhanta and Aryabhata and are of historical interest. 
+
+Updated on 31 August 2012
+- Function swe_house_name() added for Swiss Ephemeris 1.80
+
+Updated on 11 February 2014, for Swiss Ephemeris 2.00:
+- Major release, Swisseph can handle JPL ephemeris DE431
+- The following functions were added:
+  swe_lun_eclipse_when_loc()   searches locally visible lunar eclipse
+  swe_lmt_to_lat()             conversion of LMT to LAT
+  swe_lat_to_lmt()             conversion of LAT to LMT
+
+Updated on 18 March 2015, Swiss Ephemeris 2.01:
+- a few constants added to SwissEph.pm
+
+Updated on 5 August 2015, Swiss Ephemeris 2.02:
+- The following functions were added:
+  swe_deltat_ex()              provides Delta T adjusted to ephemeris chosen
+  swe_get_ayanamsa_ex()        provides ayanamsa depending on ephemeris chosen
+  swe_get_ayanamsa_ex_ut()     provides ayanamsa depending on ephemeris chosen
+
+Updated on 14 August 2015, Swiss Ephemeris 2.02.01:
+- see documentation swephprg.pdf
+
+Updated on 16 Oct 2015, Swiss Ephemeris 2.03:
+- see documentation swephprg.pdf
+
+Updated on 21 Oct 2015, Swiss Ephemeris 2.04:
+- see documentation swephprg.pdf
+
+Updated on 26 May 2016, Swiss Ephemeris 2.05:
+- see documentation swephprg.pdf
+
+Updated on 12 Jan 2018, Swiss Ephemeris 2.07:
+- see documentation swephprg.pdf
+
+Updated on 19 Jun 2019, Swiss Ephemeris 2.08:
+- a few defines (constants) were added in SwissEph.pm
+
+Updated on 9 Aug 2019, Swiss Ephemeris 2.08:
+- eclipse functions return saros series and eclipse numbers
+
+Updated on 23 Jul 2020, Swiss Ephemeris 2.09:
+- see documentation swephprg.pdf
+
+Updated on 18 Aug 2020, Swiss Ephemeris 2.09.02:
+- see documentation swephprg.pdf
+
+Updated on 10 Dec 2020, Swiss Ephemeris 2.10:
+- see documentation swephprg.pdf
+
