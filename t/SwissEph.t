@@ -47,19 +47,19 @@ is($ref->{retval}, 0, "swe_time_equ(1 jan 1900)->retval");
 if (exists($ref->{serr})) {
   print STDERR "swe_time_equ(1 jan 1900)->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{time_equ}), -0.0023, "swe_time_equ(1 jan 1900)->time_equ");
+is(round_4($ref->{time_equ}), -0.0024, "swe_time_equ(1 jan 1900)->time_equ");
 
 $ref = SwissEph::swe_lat_to_lmt(-146780.0, 82.2);
 if (exists($ref->{serr})) {
   print STDERR "swe_time_equ(1 jan 1900)->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{tjd_lmt}), -146779.9898, "swe_lat_to_lmt(-146780.0, 82.2)->tjd_lmt");
+is(round_4($ref->{tjd_lmt}), -146779.9899, "swe_lat_to_lmt(-146780.0, 82.2)->tjd_lmt");
 
 $ref = SwissEph::swe_lmt_to_lat(-146779.9898, 82.2);
 if (exists($ref->{serr})) {
   print STDERR "swe_time_equ(1 jan 1900)->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{tjd_lat}), -146779.9998, "swe_lmt_to_lat(-146779.986742931, 82.2)->tjd_lat");
+is(round_4($ref->{tjd_lat}), -146779.9999, "swe_lmt_to_lat(-146779.986742931, 82.2)->tjd_lat");
 
 #------------------------------------------------------------------------
 # Calendar conversion
@@ -171,7 +171,7 @@ if (exists($ref->{serr})) {
   print STDERR "swe_calc(1900, Venus)->serr = $ref->{serr}\n";
 }
 is(round_4($ref->{xx}->[0]), 306.3745, "swe_calc(1900, Venus)->xx[0]");
-is(round_4($ref->{xx}->[1]), -1.6830, "swe_calc(1900, Venus)->xx[1]");
+is(round_4($ref->{xx}->[1]), -1.6831, "swe_calc(1900, Venus)->xx[1]");
 is(round_4($ref->{xx}->[2]), 1.4646, "swe_calc(1900, Venus)->xx[2]");
 is(round_4($ref->{xx}->[3]), 1.2435, "swe_calc(1900, Venus)->xx[3]");
 
@@ -182,7 +182,7 @@ if (exists($ref->{serr})) {
   print STDERR "swe_calc_ut(1900, Venus)->serr = $ref->{serr}\n";
 }
 is(round_4($ref->{xx}->[0]), 306.3745, "swe_calc_ut(1900, Venus)->xx[0]");
-is(round_4($ref->{xx}->[1]), -1.6830, "swe_calc_ut(1900, Venus)->xx[1]");
+is(round_4($ref->{xx}->[1]), -1.6831, "swe_calc_ut(1900, Venus)->xx[1]");
 is(round_4($ref->{xx}->[2]), 1.4646, "swe_calc_ut(1900, Venus)->xx[2]");
 is(round_4($ref->{xx}->[3]), 1.2435, "swe_calc_ut(1900, Venus)->xx[3]");
 #print STDERR "swe_calc_ut $ref->{xx}->[0] $ref->{xx}->[1]\n";
@@ -252,7 +252,7 @@ is(round_4($ref->{phase_angle}), 36.7449, "swe_pheno(1900, Venus)->phase_angle")
 is(round_4($ref->{phase}), 0.9007, "swe_pheno(1900, Venus)->phase");
 is(round_4($ref->{elongation}), 26.2712, "swe_pheno(1900, Venus)->elongation");
 is(round_4($ref->{disc_diameter}), 0.0032, "swe_pheno(1900, Venus)->disc_diameter");
-is(round_4($ref->{magnitude}), -3.9102, "swe_pheno(1900, Venus)->magnitude");
+is(round_4($ref->{magnitude}), -3.9103, "swe_pheno(1900, Venus)->magnitude");
 is(round_4($ref->{hor_parallax}), 0, "swe_pheno(1900, Venus)->hor_parallax");
 is(round_4($ref->{attr}->[0]), 36.7449, "swe_pheno(1900, Venus)->attr[0]");
 
@@ -265,7 +265,7 @@ is(round_4($ref->{phase_angle}), 36.7449, "swe_pheno_ut(1900, Venus)->phase_angl
 is(round_4($ref->{phase}), 0.9007, "swe_pheno_ut(1900, Venus)->phase");
 is(round_4($ref->{elongation}), 26.2712, "swe_pheno_ut(1900, Venus)->elongation");
 is(round_4($ref->{disc_diameter}), 0.0032, "swe_pheno_ut(1900, Venus)->disc_diameter");
-is(round_4($ref->{magnitude}), -3.9102, "swe_pheno_ut(1900, Venus)->magnitude");
+is(round_4($ref->{magnitude}), -3.9103, "swe_pheno_ut(1900, Venus)->magnitude");
 is(round_4($ref->{hor_parallax}), 0, "swe_pheno_ut(1900, Venus)->hor_parallax");
 is(round_4($ref->{attr}->[0]), 36.7449, "swe_pheno_ut(1900, Venus)->attr[0]");
 
@@ -295,11 +295,11 @@ is($ref->{retval}, 0, "swe_refrac_extended()->retval");
 if (exists($ref->{serr})) {
   print STDERR "swe_refrac_extended()->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{alt_true}), -0.4391, "swe_refrac_extended()->alt_true");
+is(round_4($ref->{alt_true}), -0.4392, "swe_refrac_extended()->alt_true");
 is(round_4($ref->{alt_apparent}), 0.1, "swe_refrac_extended()->alt_apparent");
 is(round_4($ref->{refraction}), 0.5392, "swe_refrac_extended()->refraction");
-is(round_4($ref->{dip}), -0.5238, "swe_refrac_extended()->dip");
-is(round_4($ref->{dret}->[0]), -0.4391, "swe_refrac_extended()->dret[0]");
+is(round_4($ref->{dip}), -0.5239, "swe_refrac_extended()->dip");
+is(round_4($ref->{dret}->[0]), -0.4392, "swe_refrac_extended()->dret[0]");
 
 is(round_4(SwissEph::swe_refrac(0.6,1013,15,1)), 0.1441, "swe_refrac()");
 
@@ -350,8 +350,8 @@ is($ref->{retval}, 9, "swe_sol_eclipse_where(2008)->retval");
 if (exists($ref->{serr})) {
   print STDERR "swe_sol_eclipse_where(2008)->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{geopos}->[0]), -150.3452, "swe_sol_eclipse_where(2008)->geopos[0]");
-is(round_4($ref->{geopos}->[1]), -67.5477, "swe_sol_eclipse_where(2008)->geopos[1]");
+is(round_4($ref->{geopos}->[0]), -150.3453, "swe_sol_eclipse_where(2008)->geopos[0]");
+is(round_4($ref->{geopos}->[1]), -67.5478, "swe_sol_eclipse_where(2008)->geopos[1]");
 is(round_4($ref->{disc_ratio}), 0.9658, "swe_sol_eclipse_where(2008)->disc_ratio");
 is(round_4($ref->{fraction_diameter}), 0.9809, "swe_sol_eclipse_where(2008)->fraction_diameter");
 is(round_4($ref->{fraction_disc}), 0.9327, "swe_sol_eclipse_where(2008)->fraction_disc");
@@ -365,12 +365,12 @@ is($ref->{retval}, 5, "swe_lun_occult_where(2008)->retval");
 if (exists($ref->{serr})) {
   print STDERR "swe_lun_occult_where(2008)->serr = $ref->{serr}\n";
 }
-is(round_4($ref->{geopos}->[0]), -132.4299, "swe_lun_occult_where(2008)->geopos[0]");
-is(round_4($ref->{geopos}->[1]), -3.2154, "swe_lun_occult_where(2008)->geopos[1]");
-is(round_4($ref->{disc_ratio}), 172.5202, "swe_lun_occult_where(2008)->disc_ratio");
+is(round_6($ref->{geopos}->[0]), -132.429997, "swe_lun_occult_where(2008)->geopos[0]");
+is(round_6($ref->{geopos}->[1]), -3.215483, "swe_lun_occult_where(2008)->geopos[1]");
+is(round_4($ref->{disc_ratio}), 172.5259, "swe_lun_occult_where(2008)->disc_ratio");
 is(round_4($ref->{fraction_diameter}), 1, "swe_lun_occult_where(2008)->fraction_diameter");
 is(round_4($ref->{fraction_disc}), 1, "swe_lun_occult_where(2008)->fraction_disc");
-is(round_4($ref->{core_shadow_km}), -3461.9130, "swe_lun_occult_where(2008)->core_shadow_km");
+is(round_4($ref->{core_shadow_km}), -3461.9137, "swe_lun_occult_where(2008)->core_shadow_km");
 is(round_4($ref->{body_azimuth}), 336.2908, "swe_lun_occult_where(2008)->body_azimuth");
 is(round_4($ref->{body_alt_true}), 76.8443, "swe_lun_occult_where(2008)->body_alt_true");
 is(round_4($ref->{separation_angle}), 0.0000, "swe_lun_occult_where(2008)->separation_angle");
@@ -429,7 +429,7 @@ is(round_4($ref->{t4th_contact}), 2454679.9230, "swe_sol_eclipse_when_loc(2008)-
 is(round_4($ref->{disc_ratio}), 1.0449, "swe_sol_eclipse_when_loc(2008)->disc_ratio");
 is(round_4($ref->{fraction_diameter}), 0.1203, "swe_sol_eclipse_when_loc(2008)->fraction_diameter");
 is(round_4($ref->{fraction_disc}), 0.0497, "swe_sol_eclipse_when_loc(2008)->fraction_disc");
-is(round_4($ref->{core_shadow_km}), -120.6315, "swe_sol_eclipse_when_loc(2008)->core_shadow_km");
+is(round_4($ref->{core_shadow_km}), -120.6316, "swe_sol_eclipse_when_loc(2008)->core_shadow_km");
 is(round_4($ref->{sun_azimuth}), 309.5993, "swe_sol_eclipse_when_loc(2008)->sun_azimuth");
 is(round_4($ref->{sun_alt_true}), 51.51, "swe_sol_eclipse_when_loc(2008)->sun_alt_true");
 is(round_4($ref->{separation_angle}), 0.4739, "swe_sol_eclipse_when_loc(2008)->separation_angle");
@@ -444,10 +444,10 @@ is(round_4($ref->{t1st_contact}), 2454802.1698, "swe_lun_occult_when_loc(2008 Ve
 is(round_4($ref->{t2nd_contact}), 2454802.1705, "swe_lun_occult_when_loc(2008 Venus)->2nd_contact");
 is(round_4($ref->{t3rd_contact}), 2454802.2253, "swe_lun_occult_when_loc(2008 Venus)->3rd_contact");
 is(round_4($ref->{t4th_contact}), 2454802.2259, "swe_lun_occult_when_loc(2008 Venus)->4th_contact");
-is(round_4($ref->{disc_ratio}), 106.8891, "swe_lun_occult_when_loc(2008 Venus)->disc_ratio");
+is(round_4($ref->{disc_ratio}), 106.8927, "swe_lun_occult_when_loc(2008 Venus)->disc_ratio");
 is(round_4($ref->{fraction_diameter}), 1, "swe_lun_occult_when_loc(2008 Venus)->fraction_diameter");
 is(round_4($ref->{fraction_disc}), 1, "swe_lun_occult_when_loc(2008 Venus)->fraction_disc");
-is(round_4($ref->{core_shadow_km}), -3452.9813, "swe_lun_occult_when_loc(2008 Venus)->core_shadow_km");
+is(round_4($ref->{core_shadow_km}), -3452.9824, "swe_lun_occult_when_loc(2008 Venus)->core_shadow_km");
 is(round_4($ref->{body_azimuth}), 33.3583, "swe_lun_occult_when_loc(2008 Venus)->body_azimuth");
 is(round_4($ref->{body_alt_true}), 11.6903, "swe_lun_occult_when_loc(2008 Venus)->body_alt_true");
 is(round_4($ref->{separation_angle}), 0.0995, "swe_lun_occult_when_loc(2008 Venus)->separation_angle");
@@ -555,13 +555,17 @@ my @geopos = (8.33, 47.35,400);
 #------------------------------------------------------------------------
 }
 
-sub round6 {
-  return sprintf( "%.0f", 1000000 * shift);
+sub round_6 {
+  my $a = shift;
+  my $sign = ($a < 0) ? -1 : 1;
+  $a = int(1000000 * ($a + 0.0000005 * $sign));
+  return $a / 1000000.0;
 }
 
 sub round_4 {
   my $a = shift;
-  $a = int(10000 * ($a + 0.00005));
+  my $sign = ($a < 0) ? -1 : 1;
+  $a = int(10000 * ($a + 0.00005 * $sign));
   return $a / 10000.0;
 }    
 
