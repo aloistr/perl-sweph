@@ -60,7 +60,7 @@ use warnings;
 
 require Exporter;
 
-our $VERSION = "2.10";
+our $VERSION = "2.10.01";
 
 our @ISA = qw(Exporter);
 
@@ -509,8 +509,8 @@ and the general documentation:
 http://www.astro.com/swisseph/swephprg.htm and
 http://www.astro.com/swisseph/swisseph.htm
 
-For questions not answered in the  documentations, please become a member 
-of the Swiss Ephemeris Mailing list: swisseph@yahoogroups.com and ask them
+For questions not answered in the  documentation, please become a member 
+of the Swiss Ephemeris Mailing list: swisseph@groups.io and ask them
 there.
 
 In order to run the Swiss Ephemeris with the Perl module SwissEph.pm, 
@@ -539,7 +539,7 @@ http://www.astrotexte.ch/sources/swe_perl.html).
 
 None by default.
 Any function can be imported (all functions are included in C<@EXPORT_OK>).
-All functions can bee imported as follows:
+All functions can be imported as follows:
 use SwissEph(':all');
 
 Additional to the functions declared in the XS file, the module SwissEph.pm 
@@ -1650,11 +1650,11 @@ exports all constants required for the use of the Swiss Ephemeris.
 
 =item *
 
-Swiss Ephemeris homepage: http://www.astro.com/swisseph
+Swiss Ephemeris homepage: https://www.astro.com/swisseph
 
 =item *
 
-Swiss Ephemeris Mailing list: swisseph@yahoogroups.com 
+Swiss Ephemeris Mailing list: swisseph@groups.io
 
 =item *
 
@@ -1670,36 +1670,39 @@ Perl XS documentation: perlxs, perlxstuts, perlguts, perlapi
 =head1 AUTHORS
 
 Dieter Koch and Alois Treindl, Astrodienst, Zürich, Switzerland 
-(dieter@astro.ch, alois@astro.ch)
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright of this Perl Port (C) 2009 by Astrodienst AG, Switzerland.
+=head2 License conditions
+
+Copyright of this Perl Port (C) 2021 by Astrodienst AG, Switzerland.
 All rights reserved.
+
+This file is part of Swiss Ephemeris.
 
 Swiss Ephemeris is distributed with NO WARRANTY OF ANY KIND.  No author
 or distributor accepts any responsibility for the consequences of using it,
 or for whether it serves any particular purpose or works at all, unless he
-or she says so in writing.
+or she says so in writing.  
 
 Swiss Ephemeris is made available by its authors under a dual licensing
 system. The software developer, who uses any part of Swiss Ephemeris
 in his or her software, must choose between one of the two license models,
 which are
-a) GNU public license version 2 or later
+a) GNU Affero General Public License (AGPL)
 b) Swiss Ephemeris Professional License
 
 The choice must be made before the software developer distributes software
 containing parts of Swiss Ephemeris to others, and before any public
 service using the developed software is activated.
 
-If the developer choses the GNU GPL software license, he or she must fulfill
+If the developer choses the AGPL software license, he or she must fulfill
 the conditions of that license, which includes the obligation to place his
-or her whole software project under the GNU GPL or a compatible license.
-See http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+or her whole software project under the AGPL or a compatible license.
+See https://www.gnu.org/licenses/agpl-3.0.html
 
 If the developer choses the Swiss Ephemeris Professional license,
-he must follow the instructions as found in http://www.astro.com/swisseph/
+he must follow the instructions as found in http://www.astro.com/swisseph/ 
 and purchase the Swiss Ephemeris Professional Edition from Astrodienst
 and sign the corresponding license contract.
 
