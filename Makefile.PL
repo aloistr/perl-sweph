@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 #
 # to build statically linked SwissEphe.so, call
-# perl Makefile.PL LIBS='' MYEXTLIB='sweph/src/libswe.a'
+# perl Makefile.PL LIBS='' MYEXTLIB='/home/swehome/libswe.a'
 
 WriteMakefile(
     NAME              => 'SwissEph',
@@ -15,7 +15,7 @@ WriteMakefile(
     AUTHOR         => 'Alois Treindl <alois@astro.ch>',
     LIBS              => ['-L/usr/local/lib64/swe -lswe'], 
     #LIBS              => [''],
-    #MYEXTLIB     => 'sweph/src/libswe$(LIB_EXT)',
+    #MYEXTLIB     => '/home/swehome/libswe$(LIB_EXT)',
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
     INC               => '-I.', # e.g., '-I. -I/usr/include/other'
     DISTVNAME         => 'perl_sweph', # 
@@ -25,7 +25,7 @@ WriteMakefile(
 
 sub MY::postamble {
 '
-$(MYEXTLIB): sweph/src/Makefile
-	cd sweph/src && $(MAKE) $(PASSTHRU)
+$(MYEXTLIB): /home/swehome/Makefile
+	cd /home/swehome && $(MAKE) libswe.a $(PASSTHRU)
 ';
 }
