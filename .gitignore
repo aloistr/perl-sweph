@@ -11,4 +11,5 @@ SwissEph.bs
 SwissEph.c
 SwissEph.o
 blib/
+sweph/
 pm_to_blib
