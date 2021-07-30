@@ -98,11 +98,11 @@ replaced with the AGPL license, as one of the options in Astrodienst's dual lice
 
 ## History
 
-The SwissEph perl module is based on earlier work in 2008 by Rüdiger Plantiko, see
+The SwissEph perl module is based on earlier work up to 2008 by Rüdiger Plantiko, see
 http://www.astrotexte.ch/sources/swe_perl.html (in German)
 
-Dieter Koch at Astrodienst took over in 2008 and maintaine the module for Astrodienst's internal use since,
-until 2020. 
+Dieter Koch at Astrodienst took over in 2008 and maintained the module for Astrodienst's internal use since,
+until 2020. It was made available for download sind 2009, in https://www.astro.com/ftp/swisseph/src/
 
 In July 2021, the module was migrated to Github by Alois Treindl, and it is now maintained on GitHub.
 
