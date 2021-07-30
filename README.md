@@ -47,9 +47,10 @@ There exists the option to link statically with the library libswe.a wich you
 build on your system. Proceed as above regarding downloading and compiling Swiss Ephemeris source code.
 
 Instead of 'make libswe.so' say 'make libswe.a'
-You need to know the full path to the built library libswe.a, for example /home/myself/sweph/src/libswe.a
 
-Now run Makefile.PL with this argument:
+Now you need to know the full path to the built library libswe.a, for example /home/myself/sweph/src/libswe.a
+
+Run Makefile.PL with these arguments:
 
 ```
 perl Makefile.PL LIBS='' MYEXTLIB='/home/myself/sweph/src/libswe.a'
