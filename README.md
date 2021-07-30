@@ -91,6 +91,7 @@ Copyright (C) 2021 Astrodienst, Zurich, Switzerland.
 The Perl module SwissEphe is work derived from the original release of the Astrodienst Swiss Ephemeris library.
 To use it, the licensing conditions imposed by Astrodienst for Swiss Ephemeris must
 be fulfilled. A copy of the license file is found in https://www.astro.com/ftp/swisseph/LICENSE.
+
 Please note: since Swiss Ephemeris release 2.10.01 the GPL license has been
 replaced with the AGPL license, as one of the options in Astrodienst's dual licensing model.
 
