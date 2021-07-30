@@ -96,4 +96,13 @@ be fulfilled. A copy of the license file is found in https://www.astro.com/ftp/s
 Please note: since Swiss Ephemeris release 2.10.01 the GPL license has been
 replaced with the AGPL license, as one of the options in Astrodienst's dual licensing model.
 
+## History
+
+The SwissEph perl module is based on earlier work in 2008 by Rüdiger Plantiko, see
+http://www.astrotexte.ch/sources/swe_perl.html (in German)
+
+Dieter Koch at Astrodienst took over in 2008 and maintaine the module for Astrodienst's internal use since,
+until 2020. 
+
+In July 2021, the module was migrated to Github by Alois Treindl, and it is now maintained on GitHub.
 
