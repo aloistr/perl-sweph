@@ -1,4 +1,6 @@
-# SwissEph Perl module version 2.10.01
+# SwissEph Perl module
+
+version 2.10.01
 
 ## Introduction
 
@@ -7,7 +9,7 @@ how to install the module, any machine dependencies it may have (for
 example C compilers and installed libraries) and any other information
 that should be provided before the module is installed.
 
-## INSTALLATION
+## Installation
 
 ### On Linux, with dynamical library libswe.so
 
@@ -32,11 +34,12 @@ symbolic links required.
 
 Now you can install the Perl module for the Swiss Ephemeris.
 Type the following:
-
-  perl Makefile.PL
-  make
-  make test
-  make install	(requires root)
+```
+perl Makefile.PL
+make
+make test
+make install	(requires root)
+```
 
 ### On Linux, with statically linked Swiss Ephemeris libary
 
@@ -48,10 +51,12 @@ You need to know the full path to the built library libswe.a, for example /home/
 
 Now run Makefile.PL with this argument:
 
-  perl Makefile.PL LIBS='' MYEXTLIB='/home/myself/sweph/src/libswe.a'
-  make
-  make test
-  make install	(requires root)
+```
+perl Makefile.PL LIBS='' MYEXTLIB='/home/myself/sweph/src/libswe.a'
+make
+make test
+make install	(requires root)
+```
 
 
 ### On Windows:
@@ -71,10 +76,12 @@ After that you can install the Perl module. In the current directory
 fix the LIBS parameter. It must contain the directory to the Swiss Ephemeris
 DLL. After that run:
 
-  perl Makefile.PL
-  nmake
-  nmake test
-  nmake install
+```
+perl Makefile.PL
+nmake
+nmake test
+nmake install
+```
 
 
 ## COPYRIGHT AND LICENCE
