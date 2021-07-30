@@ -9,6 +9,18 @@ how to install the module, any machine dependencies it may have (for
 example C compilers and installed libraries) and any other information
 that should be provided before the module is installed.
 
+## Documentation
+
+Documentation is contained in file lib/SwissEph.pm in Perl's pod format.
+
+It can be accessed with: 
+
+perldoc lib/SwissEph.pm
+
+or, once the module is installed,  with
+
+perldoc -m SwissEph
+
 ## Installation
 
 ### On Linux, with dynamical library libswe.so
