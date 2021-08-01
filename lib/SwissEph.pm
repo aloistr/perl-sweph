@@ -1717,46 +1717,46 @@ Function calculates the local character of an eclipse.
 
 =head2 $outalt = swe_refrac($inalt, $atpress, $attemp, $calcflag);
 
-  Function calculates true altitude from apparent altitude or
-  apparent altitude from true altitude.
+Function calculates true altitude from apparent altitude or
+apparent altitude from true altitude.
 
-  Input:  $inalt    true or apparent altitude of a planet, depending
-                    on $calcflag
-	  $atpress  Atmospheric pressure in hPa (mbar)
-	  $attemp   Atmospheric temperature in degree C
-	  $calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
+=head3 Input: 
 
-  Output: $outalt   either apparent or true altitude of the planet,
-                    depending on $calcflag
+	$inalt    true or apparent altitude of a planet, depending on $calcflag
+	$atpress  Atmospheric pressure in hPa (mbar)
+	$attemp   Atmospheric temperature in degree C
+	$calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
+
+=head3 Output: $outalt   either apparent or true altitude of the planet, depending on $calcflag
 
   For more detailed information, read the C Programmer's Manual.
 
 
 =head2 $ref = swe_refrac_extended($inalt, $geoalt, $atpress, $attemp, $lapserate, $calcflag);
 
-  Function calculates true altitude from apparent altitude or
-  apparent altitude from true altitude.
-  It does the same as swe_refrac(), but is more skilled. 
-  (see C Programmer's Manual)
+Function calculates true altitude from apparent altitude or
+apparent altitude from true altitude.
+It does the same as swe_refrac(), but is more skilled. 
+(see C Programmer's Manual)
 
-  Input:  $inalt    true or apparent altitude of a planet, depending
-                    on $calcflag
-	  $geoalt   altitude of observer above sea level in meters
-	  $atpress  Atmospheric pressure in hPa (mbar)
-	  $attemp   Atmospheric temperature in degree C
-	  $lapserate (dT/dh) [°K/m]
-	  $calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
+=head3 Input: 
 
-  Output: $ref      hash reference, which contains:
+	$inalt    true or apparent altitude of a planet, depending on $calcflag
+	$geoalt   altitude of observer above sea level in meters
+	$atpress  Atmospheric pressure in hPa (mbar)
+	$attemp   Atmospheric temperature in degree C
+	$lapserate (dT/dh) [°K/m]
+	$calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
 
-          ->retval  OK or ERR
-	  ->serr    Error string, on error only
-	  ->dret    Array reference for an array which contains the values of
-	            the following hash members:
-	  ->alt_true 
-	  ->alt_apparent 
-	  ->refraction
-	  ->dip     Dip of the horizon 
+=head3 Output: $ref      hash reference, which contains:
+
+	->retval  OK or ERR
+	->serr    Error string, on error only
+	->dret    Array reference for an array which contains the values of the following hash members:
+	->alt_true 
+	->alt_apparent 
+	->refraction
+	->dip     Dip of the horizon 
 
   For more detailed information, read the C Programmer's Manual.
 
@@ -1766,48 +1766,50 @@ Function calculates the local character of an eclipse.
 
 =head2 $ref = swe_heliacal_ut($tjd_start, $dgeo, $datm, $dobs, $objname, $type_event, $iflag)
 
-  Function calls mornig first, morning last, evening first, or 
-  evening last of a planet or fixed star.
+Function calls mornig first, morning last, evening first, or 
+evening last of a planet or fixed star.
 
-  Input:  $tjd_start    start date for search
-          $dgeo         array pointer (geogr. longitude, latitude, height)
-	  $datm         array pointer (atm. pressure, temperature, 
-	                relative humidity, visibility/extinction coeffictient)
-          $dobs         array pointer (observer age, Snellen ratio, 
-	                is_binocular, telescope magnification, telescope
-			diameter, telescope transmission)
-          $objname      string: object name
-          $type_event   SE_HELIACAL_RISING (1)
-                        SE_HELIACAL_SETTING (2)
-                        SE_EVENING_FIRST (3)
-                        SE_MORNING_LAST (4)
-          $iflag        ephemeris flag, can be combined with the 
-	                following flags:
-			SE_HELFLAG_LONG_SEARCH     search until found
-		        SE_HELFLAG_HIGH_PRECISION  slower but preciser
-                        SE_HELFLAG_NO_DETAILS      very fast, no details
-			SE_HELFLAG_OPTICAL_PARAMS  binocular/telescope
-                        (for more info, please read the Swiss Ephemeris
-                        Programmer's Manual swephprg.doc)
+=head3 Input: 
+	
+	$tjd_start    start date for search
+	$dgeo         array pointer (geogr. longitude, latitude, height)
+	$datm         array pointer (atm. pressure, temperature, 
+		      relative humidity, visibility/extinction coeffictient)
+	$dobs         array pointer (observer age, Snellen ratio, 
+		      is_binocular, telescope magnification, telescope
+		      diameter, telescope transmission)
+	$objname      string: object name
+	$type_event   SE_HELIACAL_RISING (1)
+		      SE_HELIACAL_SETTING (2)
+		      SE_EVENING_FIRST (3)
+		      SE_MORNING_LAST (4)
+	$iflag        ephemeris flag, can be combined with the 
+		      following flags:
+		      SE_HELFLAG_LONG_SEARCH     search until found
+		      SE_HELFLAG_HIGH_PRECISION  slower but preciser
+		      SE_HELFLAG_NO_DETAILS      very fast, no details
+		      SE_HELFLAG_OPTICAL_PARAMS  binocular/telescope
+		      (for more info, please read the Swiss Ephemeris
+		      Programmer's Manual swephprg.doc)
 
-  Output: $ref      hash reference, which contains:
+=head3 Output: $ref      hash reference, which contains:
 
-          ->retval      OK or ERR
-	  ->serr        error or warning message
-          ->tstart      start of visibility (jd)
-          ->topt        optimum visibility (jd)
-          ->tend        end of visibility (jd)
-	  ->dret        array of doubles, contains tstart, topt, tend.
+	->retval      OK or ERR
+	->serr        error or warning message
+	->tstart      start of visibility (jd)
+	->topt        optimum visibility (jd)
+	->tend        end of visibility (jd)
+	->dret        array of doubles, contains tstart, topt, tend.
 
 
 =head2 $ref = swe_vis_limit_mag($tjd_start, $dgeo, $datm, $dobs, $objname, $iflag)
 
-  Function calculates magnitude limit for observation of a body under
-  the specified conditions.
+Function calculates magnitude limit for observation of a body under
+the specified conditions.
 
-  Input:  same as with swe_heliacal_ut(), but type_event is missing.
+=head3 Input:  same as with swe_heliacal_ut(), but type_event is missing.
 
-  Output: $ref        hash reference, which contains:
+=head3 Output: $ref        hash reference, which contains:
 
           ->retval    can have the following values:
                       -2        Object is below the horizon
@@ -1828,48 +1830,52 @@ Function calculates the local character of an eclipse.
 		      - altitudes and azimuts of object, Sun, and Moon.
   
 
-=head1 Normalisation to 360° and Angles between Ecliptic Points
+=head1 Normalisation to 360° and Angles between Points on a Circle
+
 
 =head2 $ddeg = swe_degnorm($ddeg);
 
-  Function normalises a value, which is <0° or >360° to a value between
-  0° and 360°.
+Function normalises a value, which is <0° or >360° to a value between
+0° and 360°.
 
 =head2 $drad = swe_radnorm($drad);
 
-  Function normalises a value, which is <0 or >2PI to a value between
-  0 and 2PI.
+Function normalises a value, which is <0 or >2PI to a value between
+0 and 2PI.
 
 =head2 $ddeg = swe_difdegn($ddeg1, $ddeg2);
 
-  Function returns the swe_degnorm($deg1 - ddeg2).
+Function returns the swe_degnorm($deg1 - ddeg2).
 
 =head2 $ddeg = swe_difdegn($ddeg1, $ddeg2);
 
-  Function returns the swe_degnorm($deg1 - ddeg2).
+Function returns the swe_degnorm($deg1 - ddeg2).
 
 =head2 $ddeg = swe_difdeg2n($ddeg1, $ddeg2);
 
-  Function returns the angle distance of $ddeg1 from $ddeg 2 as
-  a value between -180° and +180°.
+Function returns the angle distance of $ddeg1 from $ddeg 2 as
+a value between -180° and +180°.
 
 =head2 $drad = swe_difrad2n($drad1, $drad2);
 
-  Function returns the angle distance of $drad1 from $drad 2 as
-  a value between -PI and +PI.
+Function returns the angle distance of $drad1 from $drad 2 as a value between -PI and +PI.
 
 =head2 $ddeg = swe_deg_midp($ddeg1, $ddeg2);
 
-  Function returns the midpoint between the two positions.
+Function returns the midpoint between the two positions.
 
 =head2 $drad = swe_rad_midp($drad1, $drad2);
 
-  Function returns the midpoint between the two positions, in radians.
+Function returns the midpoint between the two positions, in radians.
 
-=head2 $ref swe_split_deg($ddeg, $splitflag);
+=head2 $ref = swe_split_deg($ddeg, $splitflag);
 
-  Function returns a hash with fields ideg, imin, isec, dfrc, isgn
-  splitflag 
+Functions splits a double degree value into fields, controlled by $splitflag bit settings:
+
+=head3 Input:
+  
+  $ddeg 	value to be split
+  $splitflag 	with these bit settings
   SE_SPLIT_DEG_ROUND_SEC  1;
   SE_SPLIT_DEG_ROUND_MIN => 2;
   SE_SPLIT_DEG_ROUND_DEG => 4;
@@ -1877,7 +1883,18 @@ Function calculates the local character of an eclipse.
   SE_SPLIT_DEG_KEEP_SIGN =>16;   # don't round to next sign,
                                  # e.g. 29.9999999 will be rounded
                                  # to 29°59'59" (or 29°59' or 29°)
-  SE_SPLIT_DEG_KEEP_DEG => 32 
+  SE_SPLIT_DEG_KEEP_DEG => 32    # don't round to the next degree,
+  				 # e.g. 13.9999999 will be rounded 
+				 # to 13°59'59" (or 13°59' or 13°)
+  SE_SPLIT_DEG_NAKSHATRA => 1024
+
+=head3 Output $ref	hash reference with these fields
+
+  ->ideg	degrees
+  ->imin	minutes
+  ->isec	seconds, integer part
+  ->dsecfr	fractional part of seconds (if not rounded)
+  ->isgn	sign or Nakshatra number
   
 
 =head1 SEE ALSO
