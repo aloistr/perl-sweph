@@ -34,7 +34,7 @@ OUTPUT:
 
 # swe_get_library_path()
 SV*
-swe_get_library_path(ipl) 
+swe_get_library_path() 
 CODE:  
   char spath[255];
   RETVAL = newSVpvn("", 255);
@@ -350,7 +350,7 @@ OUTPUT:
  #                dhou =>, 
  #                ihou =>, 
  #                imin =>, 
- #                isec =>,
+ #                dsec =>,
  #               }
 HV *
 swe_revjul(tjd,...)
@@ -405,12 +405,12 @@ CODE:
   HV* hp;
   hp = (HV *)sv_2mortal((SV *)newHV());
   swe_utc_time_zone(iyear,imonth,iday,ihour,imin,dsec,dtimezone,&iyear_out, &imonth_out, &iday_out, &ihour_out, &imin_out, &dsec_out);
-  (void)hv_store(hp, "year_out", 8, newSViv(iyear_out), 0);
-  (void)hv_store(hp, "month_out", 9, newSViv(imonth_out), 0);
-  (void)hv_store(hp, "day_out", 7, newSViv(iday_out), 0);
-  (void)hv_store(hp, "hour_out", 8, newSViv(ihour_out), 0);
-  (void)hv_store(hp, "min_out", 7, newSViv(imin_out), 0);
-  (void)hv_store(hp, "sec_out", 7, newSVnv(dsec_out), 0);
+  (void)hv_store(hp, "iyear_out", 8, newSViv(iyear_out), 0);
+  (void)hv_store(hp, "imonth_out", 9, newSViv(imonth_out), 0);
+  (void)hv_store(hp, "iday_out", 7, newSViv(iday_out), 0);
+  (void)hv_store(hp, "ihour_out", 8, newSViv(ihour_out), 0);
+  (void)hv_store(hp, "imin_out", 7, newSViv(imin_out), 0);
+  (void)hv_store(hp, "dsec_out", 7, newSVnv(dsec_out), 0);
   RETVAL = hp;
 OUTPUT:
   RETVAL  
