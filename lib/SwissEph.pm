@@ -65,9 +65,8 @@ our $VERSION = "2.10.01";
 our @ISA = qw(Exporter);
 
 our @SWE_FUNCTIONS = qw(
-	swe_azalt swe_azalt_rev swe_calc swe_calc_ut 
-	swe_calc_pctr
-	swe_calc_utx swe_calc_ut_prv swe_close 
+	swe_azalt swe_azalt_rev swe_calc swe_calc_ut swe_calc_pctr
+	swe_close 
 	swe_cotrans swe_cotrans_sp swe_day_of_week swe_deg_midp 
 	swe_degnorm swe_deltat swe_deltat_ex swe_difdegn swe_difdeg2n swe_difrad2n
 	swe_fixstar swe_fixstar_mag swe_fixstar_ut 
@@ -121,8 +120,9 @@ our @SWE_CONSTANTS = qw(
 	    SEFLG_J2000 SEFLG_NONUT SEFLG_SPEED3 SEFLG_SPEED SEFLG_NOGDEFL 
 	    SEFLG_NOABERR SEFLG_EQUATORIAL SEFLG_XYZ SEFLG_RADIANS 
 	    SEFLG_BARYCTR SEFLG_TOPOCTR SEFLG_SIDEREAL SEFLG_ICRS
+	    SEFLG_DPSIDEPS_1980 SEFLG_JPLHOR SEFLG_JPLHOR_APPROX
 	    SEFLG_ASTROMETRIC SEFLG_DEFAULTEPH
-	    SEFLG_CENTER_BODY
+	    SEFLG_CENTER_BODY SEFLG_TEST_PLMOON
 	    SE_SIDBITS SE_SIDBIT_ECL_T0 SE_SIDBIT_SSY_PLANE SE_SIDBIT_USER_UT 
 	    SE_SIDM_FAGAN_BRADLEY SE_SIDM_LAHIRI SE_SIDM_DELUCE SE_SIDM_RAMAN 
 	    SE_SIDM_USHASHASHI SE_SIDM_KRISHNAMURTI SE_SIDM_DJWHAL_KHUL 
@@ -289,6 +289,9 @@ use constant SEFLG_DPSIDEPS_1980 => (256*1024); # reproduce JPL Horizons
                                                 # 1962 - today to 0.002 arcsec.
 use constant SEFLG_JPLHOR => (256*1024);        # same
 use constant SEFLG_JPLHOR_APPROX => (512*1024); # approximate JPL Horizons 1962 - today
+use constant SEFLG_CENTER_BODY => (1024*1024); # calculate position of center of body (COB) of planet,
+					       # not barycenter of its system
+
 
 use constant SE_SIDBITS => 256;  
 use constant SE_SIDBIT_ECL_T0 => 256;   # projection onto ecliptic of t0
@@ -455,12 +458,36 @@ use constant SE_AUNIT_TO_PARSEC    => (1.0/206264.8062471);
 
 1;
 __END__
+=pod
+
+=encoding utf-8
 
 =head1 NAME
 
-SwissEph - The Swiss Ephemeris made accessible for Perl 
+SwissEph - The Swiss Ephemeris Perl Module
+
+It is maintained on Github https://github.com/aloistr/perl-sweph
 
 =head1 SYNOPSIS
+
+=head2 DESCRIPTION
+
+SwissEph is a Perl wrapper for the Swiss Ephemeris (see 
+https://www.astro.com/swisseph). It is implemented as an XSUB. 
+
+This manual only tells how to call the Swiss Ephemeris functions from Perl.
+For more detailed information, use the Swiss Ephemeris Programmers' Manual 
+and the general documentation: 
+https://www.astro.com/swisseph/swephprg.htm and
+https://www.astro.com/swisseph/swisseph.htm
+
+For questions not answered in the  documentation, please become a member 
+of the Swiss Ephemeris Mailing list: swisseph@groups.io and ask them
+there.
+
+For installation instructions, please see the README file on github
+https://github.com/aloistr/perl-sweph
+
 
 =head2 Simple example
 
@@ -498,123 +525,130 @@ SwissEph - The Swiss Ephemeris made accessible for Perl
     print "  $i:\t$ref->{cusps}->[$i]\n";
   }
 
-=head1 DESCRIPTION
+=head2 Testing functions from command line
 
-SwissEph is a simple Perl wrapper for the Swiss Ephemeris (see 
-http://www.astro.com/swisseph). It is implemented as an XSUB. 
+perl -e allows testing of functions directly from the command line.
+Example
 
-This manual only tells how to call the Swiss Ephemeris functions from Perl.
-For more detailed information, use the Swiss Ephemeris Programmers' Manual 
-and the general documentation: 
-http://www.astro.com/swisseph/swephprg.htm and
-http://www.astro.com/swisseph/swisseph.htm
+perl -e 'use SwissEph qw(:all); use Data::Dumper qw( Dumper ); $r = swe_calc(2340000,SE_PLUTO,SEFLG_SPEED); print Dumper($r);'
 
-For questions not answered in the  documentation, please become a member 
-of the Swiss Ephemeris Mailing list: swisseph@groups.io and ask them
-there.
+  $VAR1 = {
+          'retval' => 256,
+          'xx' => [
+                    '122.130807298779',
+                    '4.62520037690129',
+                    '39.2320159608655',
+                    '0.0280505903662191',
+                    '0.00160563980064327',
+                    '-0.00462759291078111'
+                  ]
+        };
 
-In order to run the Swiss Ephemeris with the Perl module SwissEph.pm, 
-you have to:
 
-1. Install the Swiss Ephemeris. You may download the Swiss 
-Ephemeris DLL from http://www.astro.com/swisseph, or download the 
-whole Swiss Ephemeris C source code and compile a static or a
-dynamic shared library. We built the package on a Linux system and use a
-shared library of the Swiss Ephemeris functions.
-
-2. Install the XS library:
-- Unpack the ??????
-- Open the file Makefile.PL, and edit it according to your requirements. 
-Then run it.
-- make install
-
-If you work on a Windows machine and prefer to use the Swiss Ephemeris 
-DLL, you may want to study Rüdiger Plantiko's Perl module for the 
-Swiss Ephemeris at 
-http://www.astrotexte.ch/sources/SwissEph.zip. There is also 
-a documentation in German language by Rüdiger Plantiko at 
-http://www.astrotexte.ch/sources/swe_perl.html).
-
-=head1 EXPORT
+=head2 EXPORT
 
 None by default.
 Any function can be imported (all functions are included in C<@EXPORT_OK>).
 All functions can be imported as follows:
+
 use SwissEph(':all');
 
-Additional to the functions declared in the XS file, the module SwissEph.pm 
+In addition to the functions declared in the XS file, the module SwissEph.pm 
 exports all constants required for the use of the Swiss Ephemeris.
 
 =head1 FUNCTIONS
 
-=head2 Swiss Ephemeris version and Perl wrapper version
+=head2 $ref = swe_version();
 
-* swe_version( );
+=head3 Output: $ref     hash reference, which contains:
 
-  Output: $ref     Pointer to a hash, which contains:
-	  ->version_sweperl  Version number of Perl wrapper (from 
-                             SwissEph.pm)
-          ->version_swisseph Version of Swiss Ephemeris (from SE_VERSION)
+  ->version_sweperl  Version number of Perl wrapper (from SwissEph.pm)
+  ->version_swisseph Version of Swiss Ephemeris (from SE_VERSION)
 
-* $lpath = swe_get_library_path( );
+
+=head2 $lpath = swe_get_library_path();
   
-  Function returns the library path in which the executable resides. 
-  If it is running with a DLL, then it returns the path of the DLL.
+Function returns path in which the dynamical Swiss Ephemeris library libswe.so resides. 
+If it is running with a DLL, then it returns the path of the DLL.
+If SwissEph.so is linked statically with libswe.a, the path of SwissEph.so is returned.
 
-=head2 Opening and Closing the Ephemeris
+=head1 Opening and Closing the Ephemeris
 
-* swe_set_ephe_path($path);
+
+=head2 swe_set_ephe_path($path);
 
   Function tells the SwissEphemeris where to finde the ephemeris files.
 
-  Input:  $path   Path of the ephemeris files
+=head3 Input:  $path   Path of the ephemeris files
 
-* swe_set_jpl_file($filename);
 
-  Function tells the SwissEphemeris which JPL ephemeris file to use.
+=head2 swe_set_jpl_file($filename);
 
-  This function is only needed if a JPL ephemeris is used, and if
-  this JPL ephemeris is not the standard one.
+Function tells the SwissEphemeris which JPL ephemeris file to use.
 
-* swe_close( );
+This function is only needed if a JPL ephemeris is used, and if
+this JPL ephemeris is not the standard one.
+
+
+=head2 swe_close( );
   
-  Function closes all open files and frees all space that was allocated
-  for the use of the Swiss Ephemeris.
+Function closes all open files and frees all space that was allocated
+for the use of the Swiss Ephemeris.
 
-=head2 Julian Daynumber and Calendar Conversions
 
-* $tjd = swe_julday($year, $month, $day, $hour, $calflag);
+=head1 Julian Day Number and Calendar Conversions
 
-  Function calculates the Julian Daynumber from a calendar date.
-  $calflag can have two values:
-    $calflag=SE_GREG_CAL; # use Gregorian calendar
-    $calflag=SE_JUL_CAL;  # use Gregorian calendar
-  $calflag may be omitted. If so, calendar dates before 1582/10/15 are 
-  treated as Julian, whereas dates after 1582/10/15 are treated as 
-  Gregorian.
 
-* $ref = swe_revjul($tjd, $calflag);
+=head2 $tjd = swe_julday($year, $month, $day, $hour, $calflag);
 
-  Function calculates the calendar date of a given julian day number.
-  $calflag is optional, vide explanation of swe_julday( ).
-  Output: $ref     Pointer to a hash, which contains:
-          ->iyar   year
-          ->imon   month
-	  ->iday   day
-	  ->dhou   hour (decimal)
-	  ->ihour  hour (integer)
-	  ->imin   minute
-	  ->isec   second
+Function calculates the Julian Daynumber from a calendar date.
+$calflag can have two values:
 
-* $ref = swe_utc_time_zone($year, $month, $day, $hour, $min, $sec, $dtimezone);
+  $calflag=SE_GREG_CAL; # use Gregorian calendar
+  $calflag=SE_JUL_CAL;  # use Gregorian calendar
 
-  Function converts local time to UTC, given a time zone offset,
-  or UTC to local time.
-  input
-    year ... sec     date and time (sec may be a decimal)
-    dtimezone       timezone offset
-  output
-    year_out ... sec_out
+$calflag may be omitted. If so, calendar dates before 1582/10/15 are 
+treated as Julian, whereas dates after 1582/10/15 are treated as 
+Gregorian.
+
+The function does no range check on input values. For example, month = 4, day = 31 will
+be interpreted like monht = 5, day = 1.
+
+
+=head2 $ref = swe_revjul($tjd, $calflag);
+
+Function calculates the calendar date of a given julian day number.
+$calflag is optional, vide explanation of swe_julday( ).
+
+=head3 Output: $ref     hash reference, which contains:
+
+      ->iyar   year
+      ->imon   month
+      ->iday   day
+      ->dhou   hour (double)
+      ->ihour  hour (integer)
+      ->imin   minute
+      ->dsec   second (double)
+
+
+=head2 $ref = swe_utc_time_zone($year, $month, $day, $hour, $min, $sec, $dtimezone);
+
+Function converts local time to UTC, given a time zone offset,
+or UTC to local time, in hours.
+
+=head3 input
+
+    year ... sec     date and time (sec may be a double)
+    dtimezone       timezone offset, in hours
+
+=head3 Output: $ref     hash reference, which contains:
+
+      ->iyear_out   year
+      ->imonth_out  month
+      ->iday_out    day
+      ->ihour_out   hour (integer)
+      ->imin_out    minute
+      ->dsec_out    second (double)
  
   For time zones east of Greenwich, d_timezone is positive.
   For time zones west of Greenwich, d_timezone is negative.
@@ -622,163 +656,249 @@ exports all constants required for the use of the Swiss Ephemeris.
   For conversion from local time to utc, use +d_timezone.
   For conversion from utc to local time, use -d_timezone.
 
-* $ref = swe_utc_to_jd($iyar, $imon, $iday, $ihou, $imin, $dsec, $calflag);
 
-  Function calculates the Julian Daynumber from a calendar date in UTC.
-  As for the input, note that dsec is a double.
-  $calflag is optional, vide explanation of swe_julday( ).
-  Note: 60 <= dsec < 61 is allowed, if it is a valid leap second.
-  Output: $ref     Pointer to a hash, which contains:
-          ->retval ERR or OK
-          ->serr   Error string, on error only
-          ->tjd_ut Julian day UT (UT1)
-          ->tjd_et Julian day ET (TT)
+=head2 $ref = swe_utc_to_jd($iyar, $imon, $iday, $ihou, $imin, $dsec, $calflag);
 
-* $ref = swe_jdet_to_utc($tjd, $calflag);
+Function calculates the Julian Daynumber from a calendar date in UTC.
+As for the input, note that dsec is a double.
+$calflag is optional, see explanation of swe_julday( ).
+Note: 60 <= dsec < 61 is allowed, if it is a valid leap second.
 
-  Function calculates the calendar date UTC for a given 
-  Julian day number, where the Julian day number is ET (TT).
-  $calflag is optional, vide explanation of swe_julday( ).
-  Output: $ref     Pointer to a hash, which contains:
-          ->iyar   year
-          ->imon   month
-	  ->iday   day
-	  ->ihour  hour 
-	  ->imin   minute
-	  ->dsec   second
+=head3 Output: $ref     hash reference, which contains:
+
+      ->retval ERR or OK
+      ->serr   Error string, on error only
+      ->tjd_ut Julian day UT (UT1)
+      ->tjd_et Julian day ET (TT)
+
+
+=head2 $ref = swe_jdet_to_utc($tjd, $calflag);
+
+Function calculates the calendar date UTC for a given 
+Julian day number, where the Julian day number is ET (TT).
+$calflag is optional, see explanation of swe_julday( ).
+
+=head3 Output: $ref     hash reference, which contains:
+
+      ->iyar   year
+      ->imon   month
+      ->iday   day
+      ->ihour  hour 
+      ->imin   minute
+      ->dsec   second
   Note: in case of a leap second, 60 <= dsec < 61
 
-* $ref = swe_jdut1_to_utc($tjd, $calflag);
 
-  Function calculates the calendar date UTC for a given 
-  Julian day number, where the Julian day number is UT (UT1).
-  $calflag is optional, vide explanation of swe_julday( ).
-  Output: $ref     Pointer to a hash, which contains:
-          ->iyar   year
-          ->imon   month
-	  ->iday   day
-	  ->ihour  hour 
-	  ->imin   minute
-	  ->dsec   second
+=head2 $ref = swe_jdut1_to_utc($tjd, $calflag);
+
+Function calculates the calendar date UTC for a given 
+Julian day number, where the Julian day number is UT (UT1).
+$calflag is optional, see explanation of swe_julday( ).
+
+=head3 Output: $ref     hash reference, which contains:
+
+      ->iyar   year
+      ->imon   month
+      ->iday   day
+      ->ihour  hour 
+      ->imin   minute
+      ->dsec   second
   Note: in case of a leap second, 60 <= dsec < 61
 
-* $dow = swe_day_of_week($tjd);
-  
-  Function returns the day of week for a Julian day number.
-  Monday = 0, ... Sunday = 6.
 
-=head2 Delta T and Tidal Acceleration of the Moon
+=head2 $dow = swe_day_of_week($tjd);
 
-* $dt = swe_deltat($tjd_ut);
+Function returns the day of week for a Julian day number.
+Monday = 0, ... Sunday = 6.
+
+
+=head1 Delta T and Tidal Acceleration of the Moon
+
+=head2 $dt = swe_deltat($tjd_ut);
   
-  Function calculates Delta T for a given Julian day number in 
-  Ephemeris Time. 
-  Input:  $tjd_ut  Julian day number, Universal Time
-  Output: $dt      Delta T in days
+Function calculates Delta T for a given Julian day number in 
+Ephemeris Time. 
+
+=head3 Input:  $tjd_ut  Julian day number, Universal Time
+
+=head3 Output: $dt      Delta T in days
+
+Unless you use the Moshier ephemeris, do not use this
+function before calling swe_set_ephe_path() or swe_set_jplfile().
+
+
+=head2 $ref = swe_deltat_ex($tjd_ut, $ephe_flag);
+  
+Function calculates Delta T for a given Julian day number in 
+Ephemeris Time. Delta T value is adjusted to ephemeris chosen.
+
+=head3 Input: 
+
+  $tjd_ut   Julian day number, Universal Time
+  $epheflag Ephemeris flag SEFLG_SWIEPH, SEFLG_JPLEPH, or SEFLG_MOSEPH
+
+=head3 Output:
+
+  $dt       Delta T in days
+  $serr     warning (optional)
+
   Unless you use the Moshier ephemeris, do not use this
   function before calling swe_set_ephe_path() or swe_set_jplfile().
 
-* $ref = swe_deltat_ex($tjd_ut, $ephe_flag);
-  
-  Function calculates Delta T for a given Julian day number in 
-  Ephemeris Time. Delta T value is adjusted to ephemeris chosen.
-  Input:  $tjd_ut   Julian day number, Universal Time
-       :  $epheflag Ephemeris flag SEFLG_SWIEPH, SEFLG_JPLEPH, or
-		    SEFLG_MOSEPH
-  Output: $dt       Delta T in days
-          $serr     warning (optional)
-  Unless you use the Moshier ephemeris, do not use this
-  function before calling swe_set_ephe_path() or swe_set_jplfile().
 
-* swe_set_delta_t_userdef($dt);
+=head2 swe_set_delta_t_userdef($dt);
 
-  Function sets Delta T to a fixed user-defined value. After a call
-  of this function, swe_deltat() and swe_deltat_ex() always return
-  the value set by this function. In order to return to automatic
-  Delta T, call swe_set_delta_t_userdef(SE_DELTAT_AUTOMATIC). 
+Function sets Delta T to a fixed user-defined value. After a call
+of this function, swe_deltat() and swe_deltat_ex() always return
+the value set by this function. In order to return to automatic
+Delta T, call swe_set_delta_t_userdef(SE_DELTAT_AUTOMATIC). 
 
-* $tacc = swe_get_tid_acc( );
 
-  Function returns the tidal acceleration on which the Swiss Ephemeris
-  is based.
+=head2 $tacc = swe_get_tid_acc( );
 
-* swe_set_tid_acc($tacc);
+Function returns the tidal acceleration on which the Swiss Ephemeris
+is based.
 
-  Function sets the tidal acceleration to any other value. This is 
-  relevant for Delta T calculations.
 
-=head2 Sidereal Time
+=head2 swe_set_tid_acc($tacc);
 
-* $tsid = swe_sidtime($tjd_ut);
-  
-  Function calculates sidereal time in hours for a given Julian 
-  day number in Universal Time.
+Function sets the tidal acceleration to any other value. This is 
+relevant for Delta T calculations.
 
-* $tsid = swe_sidtime0($tjd_ut, $eps, $nut);
-  
-  Function calculates sidereal time in hours:
-  $tjd_ut     Julian day number in Universal Time
-  $eps        Obliquity of ecliptic, degrees
-  $nut        Nutation in longitude, degrees
-  This function provides the same result as swe_sidtime(), if $eps is
-  the obliquity of the true ecliptic of date (mean eps + nutation in
-  obliquity).
 
-=head2 Time Equation
+=head1 Sidereal Time
 
-* $ref = swe_time_equ($tjd_ut);
 
-  Function calculates the time equation
-  Input:  $tjd_ut  Julian day number, Universal Time
-  Output: $ref     Pointer to a hash, which contains:
-          -> retval     OK or ERR
-          -> time_equ   time equation in days
-          -> serr       error message (on error only)
+=head2 $tsid = swe_sidtime($tjd_ut);
+
+Function calculates sidereal time in hours for a given Julian 
+day number in Universal Time.
+
+
+=head2 $tsid = swe_sidtime0($tjd_ut, $eps, $nut);
+
+Function calculates sidereal time in hours
+
+=head3 Input:
+
+$tjd_ut     Julian day number in Universal Time
+$eps        Obliquity of ecliptic, degrees
+$nut        Nutation in longitude, degrees
+
+This function provides the same result as swe_sidtime(), if $eps is
+the obliquity of the true ecliptic of date (mean eps + nutation in
+obliquity).
+
+
+=head1 Time Equation
+
+
+=head2 $ref = swe_time_equ($tjd_ut);
+
+Function calculates the time equation
+
+=head3 Input:  $tjd_ut  Julian day number, Universal Time
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> retval     OK or ERR
+	-> time_equ   time equation in days
+	-> serr       error message (on error only)
+
 
 =head2 Conversions between LMT and LAT (Local Mean/Apparent Time)
 
-* $ref = swe_lmt_to_lat($tjd_lmt, $geolon);
+=head2 $ref = swe_lmt_to_lat($tjd_lmt, $geolon);
 
-  Function converts Local Mean Time to Local Apparent Time
-  Input:  $tjd_lmt Julian day number, Local Mean Time
-          $geolon  geographic longitude
-  Output: $ref     Pointer to a hash, which contains:
+Function converts Local Mean Time to Local Apparent Time
+
+=head3 Input:
+	
+	$tjd_lmt Julian day number, Local Mean Time
+	$geolon  geographic longitude
+
+=head3 Output: $ref     hash reference, which contains:
+
           -> retval     OK or ERR
           -> tjd_lat   Julian day number, Local Apparent time
           -> serr       error message (on error only)
 
-* $ref = swe_lat_to_lmt($tjd_lat, $geolon);
 
-  Function converts Local Apparent Time to Local Mean Time
-  Input:  $tjd_lat Julian day number, Local Apparent Time
-          $geolon  geographic longitude
-  Output: $ref     Pointer to a hash, which contains:
-          -> retval     OK or ERR
-          -> tjd_lmt   Julian day number, Local Mean time
-          -> serr       error message (on error only)
+=head2 $ref = swe_lat_to_lmt($tjd_lat, $geolon);
 
-=head2 Positions of Celestial Bodies
+Function converts Local Apparent Time to Local Mean Time
 
-* $ref = swe_calc($tjd_et, $ipl, $iflag);
+=head3 Input:
 
-  Function calculates the position of a planet or asteroid.
+	$tjd_lat Julian day number, Local Apparent Time
+	$geolon  geographic longitude
 
-  Input:  $tjd_et  Julian day number, Ephemeris Time
-          $ipl     Planet identification number (see below)
-          $iflag   Calculation specifications (see below)
-  Output: $ref     Pointer to a hash, which contains:
-          -> retval     ERR or $iflag; $iflag may have been corrected
-          -> serr  Error string, on error only
-          -> xx    Pointer to position array. The content of this
-	           array depends on the calculation specifications
-		   in iflag.
+=head3 Output: $ref     hash reference, which contains:
 
-* $ref = swe_calc_ut($tjd_ut, $ipl, $iflag);
+	-> retval     OK or ERR
+	-> tjd_lmt   Julian day number, Local Mean time
+	-> serr       error message (on error only)
 
-  Function does the same as swe_calc( ), but for a Universal Time
-  Julian day number.
 
-* Planet numbers ($ipl) for swe_calc( )
+=head1 Positions of Celestial Bodies
+
+=head2 $ref = swe_calc($tjd_et, $ipl, $iflag);
+
+Function calculates the position of a planet or asteroid.
+
+=head3 Input:
+
+	$tjd_et  Julian day number, Ephemeris Time
+	$ipl     Planet identification number (see below)
+	$iflag   Calculation specifications (see below)
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> retval     ERR or $iflag; $iflag may have been corrected
+	-> serr  Error string, on error only
+	-> xx    array reference for array of 6 doubles.
+	  The content of this array depends on the calculation specifications in iflag.
+
+
+=head2 $ref = swe_calc_ut($tjd_ut, $ipl, $iflag);
+
+Function does the same as swe_calc(), but for a Universal Time
+Julian day number.
+
+=head3 Input:
+
+	$tjd_ut  Julian day number, Universal Time
+	$ipl     Planet identification number (see below)
+	$iflag   Calculation specifications (see below)
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> retval     ERR or $iflag; $iflag may have been corrected
+	-> serr  Error string, on error only
+	-> xx    array reference for array of 6 doubles.
+	  The content of this array depends on the calculation specifications in iflag.
+
+
+=head2 $ref = swe_calc_pctr($tjd_et, $ipl, $iplctr, $iflag);
+
+Function calculates the position of a planet or asteroid, relative to a center object iplctr
+
+=head3 Input:
+
+	$tjd_et  Julian day number, Ephemeris Time
+	$ipl     Planet identification number (see below)
+	$iplctr	 center planet number
+	$iflag   Calculation specifications (see below)
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> retval     ERR or $iflag; $iflag may have been corrected
+	-> serr  Error string, on error only
+	-> xx    array reference for array of 6 doubles.
+	  The content of this array depends on the calculation specifications in iflag.
+
+
+=head2 Planet numbers ($ipl) for swe_calc() function family
 
   Many Swiss Ephemeris functions use planet numbers to identify the
   planet for which a calculation is to be done. For this, you can
@@ -796,7 +916,8 @@ exports all constants required for the use of the Swiss Ephemeris.
   For more info, e.g. fictitious bodies, see the constants list
   in SwissEph.pm.
 
-* Calculation Specifications ($iflag) for swe_calc( ) 
+
+=head2 Calculation flags ($iflag) for swe_calc( ) 
 
   The function swe_calc( ) can provide different kinds of planetary 
   positions, e.g. it can provide them in different coordinate systems,
@@ -825,17 +946,25 @@ exports all constants required for the use of the Swiss Ephemeris.
   SEFLG_TOPOCTR = (32*1024) # topocentric positions
   SEFLG_SIDEREAL = (64*1024)# sidereal positions
   SEFLG_ICRS = (128*1024)   # ICRS (DE406 reference frame)
+  SEFLG_DPSIDEPS_1980 = (256*1024) # reproduce JPL Horizons
+                                   # 1962 - today to 0.002 arcsec.
+  SEFLG_JPLHOR = (256*1024)        # same
+  SEFLG_JPLHOR_APPROX = (512*1024) # approximate JPL Horizons 1962 - today
+  SEFLG_CENTER_BODY   = (1024*1024)# calculate position of center of body (COB) of planet, not barycenter of its system 
 
-* swe_set_topo($geolon, $geolat, $geoalt);
+
+=head2 swe_set_topo($geolon, $geolat, $geoalt);
 
   Function sets the geographical position for topocentric calculations.
   Call this function before calling swe_calc( ) with the topocentric 
   flag (SEFLG_TOPOCTR).
+
   Input:  $geolon  Geographical longitude
           $geolat  Geographical latitude
           $geoalt  Height above sea level in meters
 
-* swe_set_ayanamsa($isidmode, t0, ayan_t0);
+
+=head2 swe_set_ayanamsa($isidmode, t0, ayan_t0);
 
   Function sets the ayanamsa for the calculation of sidereal positions
   of planets or fixed stars. Call this function before calling swe_calc( )
@@ -851,51 +980,64 @@ exports all constants required for the use of the Swiss Ephemeris.
   SE_SIDM_FAGAN_BRADLEY, SE_SIDM_LAHIRI. For the other predefined 
   ayanamsas, please study the C Programmer's Manual.
 
-* $daya = swe_get_ayanamsa($tjd_et);
+
+=head2 $daya = swe_get_ayanamsa($tjd_et);
 
   Function returns the ayanamsa for a Julian day number.
 
   Input:  $tjd_et  Julian day number in Ephemeris Time
+
   Output: $daya    Ayanamsa in degrees
 
-* $daya = swe_get_ayanamsa_ut($tjd_ut);
+
+=head2 $daya = swe_get_ayanamsa_ut($tjd_ut);
 
   Function does the same as swe_get_ayanamsa( ), but input parameter
   $tjd_ut is Universal Time.
 
-* $daya = swe_get_ayanamsa_ex($tjd_et, epheflag);
+
+=head2 $ref = swe_get_ayanamsa_ex($tjd_et, epheflag);
 
   Function returns the ayanamsa for a Julian day number, depending on
   ephemeris chosen.
 
   Input:  $tjd_et  Julian day number in Ephemeris Time
-  Output: $retval  return value, either ERR or ephemeris flag
-          $daya    Ayanamsa in degrees
-	  $serr    error message, on error only
 
-* $daya = swe_get_ayanamsa_ex_ut($tjd_ut, epheflag);
+  Output: $ref     hash reference, which contains:
+
+          ->retval  return value, either ERR or ephemeris flag
+          ->daya    Ayanamsa in degrees
+	  ->serr    error message, on error only
+
+
+=head2 $ref = swe_get_ayanamsa_ex_ut($tjd_ut, epheflag);
 
   Function does the same as swe_get_ayanamsa_ex(), but input parameter
   $tjd_ut is Universal Time.
 
-* $ayanam = swe_get_ayanamsa_name($isidmode);
+
+=head2 $ayanam = swe_get_ayanamsa_name($isidmode);
 
   Function returns the name of the ayanamsa.
 
-=head2 Positions of Fixed Stars
 
-* $ref = swe_fixstar($star, $tjd_et, $iflag);
-* $ref = swe_fixstar2($star, $tjd_et, $iflag);
+=head1 Positions of Fixed Stars
+
+=head2 $ref = swe_fixstar($star, $tjd_et, $iflag);
+
+=head2 $ref = swe_fixstar2($star, $tjd_et, $iflag);
 
   Function calculates the position of a fixed star.
 
   Input:  $star    Star name, e.g. "spica" or "alVir"
           $tjd_et  Julian day number, Ephemeris Time
           $iflag   Calculation specifications (see above)
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or $iflag; $iflag may have been corrected
           -> serr  Error string, on error only
-          -> xx    Pointer to position array. The content of this
+          -> xx    hash reference. The content of this
 	           array depends on the calculation specifications
 		   in iflag.
           -> starname Corrected star name, e.g. like "Spica,alVir"
@@ -903,8 +1045,9 @@ exports all constants required for the use of the Swiss Ephemeris.
   Function swe_fixstar2() has better performance with great numbers
   of fixed star calculations.
 
-* $ref = swe_fixstar_ut($star, $tjd_ut, $iflag);
-* $ref = swe_fixstar2_ut($star, $tjd_ut, $iflag);
+=head2 $ref = swe_fixstar_ut($star, $tjd_ut, $iflag);
+
+=head2 $ref = swe_fixstar2_ut($star, $tjd_ut, $iflag);
 
   Function does the same as swe_fixstar( ), but for a Universal Time
   Julian day number.
@@ -912,26 +1055,32 @@ exports all constants required for the use of the Swiss Ephemeris.
   Function swe_fixstar2_ut() has better performance with great numbers
   of fixed star calculations.
 
-=head2 Name, Magnitude, Phase, Elongation, Disc Diameter, etc.
 
-* $name = swe_get_planet_name($ipl);
+=head1 Name, Magnitude, Phase, Elongation, Disc Diameter, etc.
+
+
+=head2 $name = swe_get_planet_name($ipl);
 
   Function returns the planet name.
 
   Input:  $ipl     Planet identification number
+
   Output: $name    Name of planet.
 
-* $ref = swe_pheno($tjd_et, $ipl, $iflag);
+
+=head2 $ref = swe_pheno($tjd_et, $ipl, $iflag);
 
   Function calculates the position of a planet or asteroid.
 
   Input:  $tjd_et  Julian day number, Ephemeris Time
           $ipl     Planet identification number
           $iflag   Calculation specifications
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or $iflag; $iflag may have been corrected
           -> serr  Error string, on error only
-	  -> attr  Pointer to an array. Array contains the values 
+	  -> attr  Array reference. Array contains the values 
 	           of the following hash members.
           -> phase_angle Phase angle (Earth-Planet-Sun)
           -> phase Phase (illumined fraction of disc)
@@ -940,18 +1089,22 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> magnitude
 	  -> hor_parallax   Horizontal parallax of the Moon.
 
-* $ref = swe_pheno($tjd_et, $ipl, $iflag);
+
+=head2 $ref = swe_pheno($tjd_et, $ipl, $iflag);
 
   Function does the same as swe_pheno( ), but for a Universal Time
   Julian day number.
 
-* $ref = swe_fixstar_mag($star);
-* $ref = swe_fixstar2_mag($star);
+
+=head2 $ref = swe_fixstar_mag($star);
+=head2 $ref = swe_fixstar2_mag($star);
 
   Function calculates the magnitude of a fixed star.
 
   Input:  $star    Star name, e.g. "spica" or "alVir"
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or OK
           -> serr  Error string, on error only
           -> dmag  Magnitude of fixed star
@@ -960,9 +1113,11 @@ exports all constants required for the use of the Swiss Ephemeris.
   Function swe_fixstar2_mag() has better performance with great numbers
   of fixed star calculations.
 
-=head2 Rising, Setting and Meridian Transits
 
-* $ref = swe_rise_trans($tjd_ut, $ipl, $star, $epheflag, $rsmi, $geopos, $atpress, $attemp);
+=head1 Rising, Setting and Meridian Transits
+
+
+=head2 $ref = swe_rise_trans($tjd_ut, $ipl, $star, $epheflag, $rsmi, $geopos, $atpress, $attemp);
 
   Function calculates the rising, setting, or meridian transit of 
   a celestial body.
@@ -989,13 +1144,16 @@ exports all constants required for the use of the Swiss Ephemeris.
           $geopos  Pointer ot array of geogr. long., lat., height
 	  $atpress Atmospheric pressure in hPa (mbar)
 	  $attemp  Atmospheric temperature in degree C
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or OK
           -> serr  Error string, on error only
 	  -> dret  Julian day number in Universal Time of rising, etc.
 	  -> starname  Corrected star name
 
-* $ref = swe_rise_trans_true_hor($tjd_ut, $ipl, $star, $epheflag, $rsmi, $geopos, $atpress, $attemp, $horhgt);
+
+=head2 $ref = swe_rise_trans_true_hor($tjd_ut, $ipl, $star, $epheflag, $rsmi, $geopos, $atpress, $attemp, $horhgt);
 
   This function is similar to the function swe_rise_trans(), but
   the rising and setting can be calculated for a horizon which is 
@@ -1003,10 +1161,12 @@ exports all constants required for the use of the Swiss Ephemeris.
           $horhgt  height of the horizon in degrees at the point
 	           where the body is expected to rise
 
-=head2 Nodes and Apsides, orbital elements
 
-* $ref = swe_nod_aps($tjd_et, $ipl, $iflag, $method);
-* $ref = swe_nod_aps_ut($tjd_ut, $ipl, $iflag, $method);
+=head1 Nodes and Apsides, orbital elements
+
+
+=head2 $ref = swe_nod_aps($tjd_et, $ipl, $iflag, $method);
+=head2 $ref = swe_nod_aps_ut($tjd_ut, $ipl, $iflag, $method);
 
   Function calculates the positions of the nodes and apsides of 
   planets.
@@ -1016,15 +1176,18 @@ exports all constants required for the use of the Swiss Ephemeris.
           $ipl     Planet identification number
           $iflag   (same parameter as with swe_calc( ))
           $method  (see C Programmer's Manual)=
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or $iflag; $iflag may have been corrected
           -> serr  Error string, on error only
-	  -> xnasc Pointer to position array of ascending node
-	  -> xndsc Pointer to position array of descending node
-	  -> xperi Pointer to position array of perihelion
-	  -> xaphe Pointer to position array of aphelion
+	  -> xnasc Array reference for position array of ascending node
+	  -> xndsc Array reference for position array of descending node
+	  -> xperi Array reference for position array of perihelion
+	  -> xaphe Array reference for position array of aphelion
 
-* $ref = swe_get_orbital_elements($tjd_et, $ipl, $iflag);
+
+=head2 $ref = swe_get_orbital_elements($tjd_et, $ipl, $iflag);
 
   Function calculates osculating Kepler elements relative to the
   mean equinox J2000 and other orbital data.
@@ -1033,10 +1196,12 @@ exports all constants required for the use of the Swiss Ephemeris.
           $ipl     Planet identification number
           $iflag   (same parameter as with swe_calc( ), although
 	           some values do not make sense)
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or $iflag; $iflag may have been corrected
           -> serr  Error string, on error only
-          -> dret  Pointer to data array. The same data are also
+          -> dret  Array reference for data array. The same data are also
 	           provided as follows (same order):
           -> sema  semiaxis
 	  -> ecce  eccentricity
@@ -1055,7 +1220,8 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> perihelion_distance 
 	  -> aphelion_distance
 
-* $ref = swe_orbit_max_min_true_distance($tjd_et, $ipl, $iflag);
+
+=head2 $ref = swe_orbit_max_min_true_distance($tjd_et, $ipl, $iflag);
 
   Function calculates the maximum, minimum and true distance
   of a planet from the EMB or the Sun, based on the osculating
@@ -1066,16 +1232,18 @@ exports all constants required for the use of the Swiss Ephemeris.
           $iflag   (same parameter as with swe_calc( ), although
 	           some values do not make sense)
 
-  Output: $ref     Pointer to a hash, which contains:
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or $iflag; $iflag may have been corrected
           -> serr  Error string, on error only
           -> dmax  maximum distance
           -> dmin  minimum distance
           -> dtrue true distance at $tjd_et
 
-=head2 Eclipses and Occultations by the Moon
 
-* $ref = swe_sol_eclipse_when_glob($tjd_ut, $iflag, $ifltype, $backw);
+=head1 Eclipses and Occultations by the Moon
+
+=head2 $ref = swe_sol_eclipse_when_glob($tjd_ut, $iflag, $ifltype, $backw);
 
   Finds the next solar eclipse no matter where on earth.
 
@@ -1084,10 +1252,12 @@ exports all constants required for the use of the Swiss Ephemeris.
           $ifltype Eclipse type to be searched; 0 if any type of
 	           eclipse is wanted
           $backw   Search backward in time
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or eclipse type
           -> serr  Error string, on error only
-	  -> tret  Pointer to array, which contains the values fo the
+	  -> tret  Array reference for array, which contains the values fo the
 	           following hash members:
 	  -> ecl_maximum      time of maximum eclipse (UT)
 	  -> ecl_local_noon   time when eclipse happens at local noon (UT)
@@ -1102,19 +1272,21 @@ exports all constants required for the use of the Swiss Ephemeris.
   SE_ECL_CENTRAL, SE_ECL_NONCENTRAL, SE_ECL_TOTAL, SE_ECL_ANNULAR,
   SE_ECL_PARTIAL, SE_ECL_ANNULAR_TOTAL
 
-* $ref = swe_sol_eclipse_when_loc($tjd_ut, $iflag, $backw, $geopos);
+=head2 $ref = swe_sol_eclipse_when_loc($tjd_ut, $iflag, $backw, $geopos);
 
-  Finds the next solar eclipse for a given place on earth.
+Finds the next solar eclipse for a given place on earth.
 
   Input:  $tjd_ut  Julian day number, Universal Time
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
           $backw   Search backward in time
-          $geopos  Pointer to array of geograph. long., lat., height
-  Output: $ref     Pointer to a hash, which contains:
+          $geopos  Array reference for array of geograph. long., lat., height
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or eclipse type
           -> serr  Error string, on error only
-	  -> tret  Pointer to array (s. C Programmer's Manual)
-	  -> attr  Pointer to array (s. C Programmer's Manual)
+	  -> tret  Array reference for array (s. C Programmer's Manual)
+	  -> attr  Array reference for array (s. C Programmer's Manual)
 	  -> ecl_maximum       time of maximum eclipse (UT)
 	  -> t1st_contact
 	  -> t2nd_contact
@@ -1130,18 +1302,20 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> sun_alt_app
 	  -> separation_angle
 
-* $ref = swe_sol_eclipse_where($tjd_ut, $iflag);
 
-  Finds the place on earth where the eclipse is maximal at a given
-  time. 
+=head2 $ref = swe_sol_eclipse_where($tjd_ut, $iflag);
+
+Finds the place on earth where the eclipse is maximal at a given time. 
 
   Input:  $tjd_ut  Julian day number, Universal Time
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval            ERR or eclipse type
           -> serr              Error string, on error only
-	  -> attr              Pointer to array (s. Programmer's Manual)
-	  -> geopos            Pointer to array, geogr. position
+	  -> attr              Array reference for array (s. Programmer's Manual)
+	  -> geopos            Array reference for array, geogr. position
 	                       where eclipse is maximal
 	  -> disc_ratio        size ratio of the two discs
 	  -> fraction_diameter percentage of diameter occulted
@@ -1154,17 +1328,20 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> geo_long          (from geopos)
 	  -> geo_lat           (from geopos)
 
-* $ref = swe_sol_eclipse_how($tjd_ut, $iflag, $geopos);
 
-  Function calculates local character of an eclipse
+=head2 $ref = swe_sol_eclipse_how($tjd_ut, $iflag, $geopos);
+
+Function calculates local character of an eclipse
 
   Input:  $tjd_ut  Julian day number, Universal Time
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
-          $geopos  Pointer to array of geograph. long., lat., height
-  Output: $ref     Pointer to a hash, which contains:
+          $geopos  Array reference for array of geograph. long., lat., height
+
+  Output: $ref     hash reference, which contains:
+
           -> retval            ERR or eclipse type
           -> serr              Error string, on error only
-	  -> attr              Pointer to array (s. Programmer's Manual)
+	  -> attr              Array reference for array (s. Programmer's Manual)
 	  -> disc_ratio        size ratio of the two discs
 	  -> fraction_diameter percentage of diameter occulted
 	  -> fraction_disc     percentage of disc occulted
@@ -1174,7 +1351,8 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> sun_alt_true
 	  -> separation_angle
 
-* $ref = swe_lun_eclipse_when($tjd_ut, $iflag, $ifltype, $backw);
+
+=head2 $ref = swe_lun_eclipse_when($tjd_ut, $iflag, $ifltype, $backw);
 
   Finds the next lunar eclipse
 
@@ -1183,10 +1361,12 @@ exports all constants required for the use of the Swiss Ephemeris.
           $ifltype Eclipse type to be searched; 0 if any type of
 	           eclipse is wanted
           $backw   Search backward in time
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or eclipse type
           -> serr  Error string, on error only
-	  -> tret  Pointer to array, which contains the values fo the
+	  -> tret  Array reference for array, which contains the values fo the
 	           following hash members:
 	  -> ecl_maximum      time of maximum eclipse (UT)
 	  -> ecl_partial_begin
@@ -1199,18 +1379,21 @@ exports all constants required for the use of the Swiss Ephemeris.
   There are the following eclipse types for lunar eclipses:
   SE_ECL_TOTAL, SE_ECL_PENUMBRAL, SE_ECL_PARTIAL
 
-* $ref = swe_lun_eclipse_when_loc($tjd_ut, $iflag, $backw, $geopos);
 
-  Finds the next lunar eclipse
+=head2 $ref = swe_lun_eclipse_when_loc($tjd_ut, $iflag, $backw, $geopos);
+
+Finds the next lunar eclipse
 
   Input:  $tjd_ut  Julian day number, Universal Time
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
           $backw   Search backward in time
 	  $geopos      pointer to array of geogr. long., lat., height
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or eclipse type
           -> serr  Error string, on error only
-	  -> tret  Pointer to array, which contains the values fo the
+	  -> tret  Array reference for array, which contains the values fo the
 	           following hash members:
 	  -> ecl_maximum      time of maximum eclipse (UT)
 	  -> ecl_partial_begin
@@ -1231,17 +1414,20 @@ exports all constants required for the use of the Swiss Ephemeris.
   There are the following eclipse types for lunar eclipses:
   SE_ECL_TOTAL, SE_ECL_PENUMBRAL, SE_ECL_PARTIAL
 
-* $ref = swe_lun_eclipse_how($tjd_ut, $iflag, $geopos);
 
-  Function calculates the local character of an eclipse.
+=head2 $ref = swe_lun_eclipse_how($tjd_ut, $iflag, $geopos);
+
+Function calculates the local character of an eclipse.
 
   Input:  $tjd_ut  Julian day number, Universal Time
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
-          $geopos  Pointer to array of geograph. long., lat., height
-  Output: $ref     Pointer to a hash, which contains:
+          $geopos  Array reference for array of geograph. long., lat., height
+
+  Output: $ref     hash reference, which contains:
+
           -> retval            ERR or eclipse type
           -> serr              Error string, on error only
-	  -> attr              Pointer to array (s. Programmer's Manual)   
+	  -> attr              Array reference for array (s. Programmer's Manual)   
 	  -> mag_umbral        Umbral magnitude
 	  -> mag_penumbral     Penumbral magnitude
 	  -> moon_azimuth 
@@ -1249,7 +1435,8 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> moon_alt_app
 	  -> separation_angle
 
-* $ref = swe_lun_occult_when_glob($tjd_ut, $ipl, $star, $iflag, $ifltype, $backw);
+
+=head2 $ref = swe_lun_occult_when_glob($tjd_ut, $ipl, $star, $iflag, $ifltype, $backw);
 
   Finds the next occultation of a celestial body by the moon,
   no matter where on earth.
@@ -1261,11 +1448,13 @@ exports all constants required for the use of the Swiss Ephemeris.
           $ifltype Eclipse type to be searched; 0 if any type of
 	           eclipse is wanted
           $backw   Search backward in time
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval     ERR or occultation type
           -> serr  Error string, on error only
           -> starname  Corrected star name
-	  -> tret  Pointer to array, which contains the values fo the
+	  -> tret  Array reference for array, which contains the values fo the
 	           following hash members:
 	  -> occ_maximum      Time of maximum occultation (UT)
 	  -> occ_local_noon   Occ. happens at local noon (UT)
@@ -1279,7 +1468,8 @@ exports all constants required for the use of the Swiss Ephemeris.
   There are the following eclipse types for lunar eclipses:
   SE_ECL_TOTAL, SE_ECL_PARTIAL, SE_ECL_CENTRAL, SE_ECL_NONCENTRAL
 
-* $ref = swe_lun_occult_when_loc($tjd_ut, $ipl, $star, $iflag, $backw, $geopos);
+
+=head2 $ref = swe_lun_occult_when_loc($tjd_ut, $ipl, $star, $iflag, $backw, $geopos);
 
   Finds the next solar eclipse for a given place on earth.
 
@@ -1288,13 +1478,15 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  $star    Star name, if a star occultation is searched
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
           $backw   Search backward in time
-          $geopos  Pointer to array of geograph. long., lat., height
-  Output: $ref     Pointer to a hash, which contains:
+          $geopos  Array reference for array of geograph. long., lat., height
+
+  Output: $ref     hash reference, which contains:
+
           -> retval            ERR or eclipse type
           -> serr              Error string, on error only
           -> starname          Corrected star name
-	  -> tret  Pointer to array (s. C Programmer's Manual)
-	  -> attr  Pointer to array (s. C Programmer's Manual)
+	  -> tret  Array reference for array (s. C Programmer's Manual)
+	  -> attr  Array reference for array (s. C Programmer's Manual)
 	  -> ecl_maximum       time of maximum occultation (UT)
 	  -> t1st_contact
 	  -> t2nd_contact
@@ -1309,7 +1501,8 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> body_alt_true
 	  -> separation_angle
 
-* $ref = swe_lun_occult_where($tjd_ut, $ipl, $star, $iflag);
+
+=head2 $ref = swe_lun_occult_where($tjd_ut, $ipl, $star, $iflag);
 
   Finds the place on earth where the occultation is maximal at a given
   time. 
@@ -1318,12 +1511,14 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  $ipl     Planet occulted
 	  $star    Star name, if a star occultation is searched
           $iflag   (specify ephemeris to be used, cf. swe_calc( ))
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           -> retval            ERR or eclipse type
           -> serr              Error string, on error only
           -> starname          Corrected star name
-	  -> attr              Pointer to array (s. Programmer's Manual)
-	  -> geopos            Pointer to array, geogr. position
+	  -> attr              Array reference for array (s. Programmer's Manual)
+	  -> geopos            Array reference for array, geogr. position
 	                       where eclipse is maximal
 	  -> disc_ratio        size ratio of the two discs
 	  -> fraction_diameter percentage of diameter occulted
@@ -1336,67 +1531,80 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  -> geo_long          (from geopos)
 	  -> geo_lat           (from geopos)
 
-=head2 Coordinate Transformations
 
-* @cout = swe_cotrans(\@cin, $eps);
+=head1 Coordinate Transformations
+
+
+=head2 @cout = swe_cotrans(\@cin, $eps);
 
   Function transforms polar coordinates from equator to ecliptic or 
   from ecliptic to equator.
+
   Input:  \@cin    Polar coordinates of point to be transformed;
-		   pointer to an array of 3 decimals. 
+		   reference to an array of 3 decimals. 
                    (e.g. longitude, latitude, distance)
 	  $eps     Ecliptic obliquity. 
 		   Must be positive for transformation equator->ecliptic
 		   Must be negative for transformation ecliptic->equator
+
   Output: @cout    Output coordinates; an array of 3 decimals.
 
-* @cout = swe_cotrans_sp(\@cin, $eps);
+=head2 @cout = swe_cotrans_sp(\@cin, $eps);
  
   Function does the same as swe_cotrans(), but in addition, it also 
   transforms the speed of a body to another coordinate system.  
   The input and output arrays have 6 decimals, 3 for the position 
   and 3 for the speed.  
 
-* $ref = swe_azalt($tjd_ut, $calcflag, $geopos, $atpress, $attemp, $xin);
+
+=head2 $ref = swe_azalt($tjd_ut, $calcflag, $geopos, $atpress, $attemp, $xin);
 
   Function calculates the azimuth and altitude from ecliptical or 
   equatorial coordinates.
 
   Input:  $tjd_ut   Julian day number, UT
 	  $calcflag either SE_ECL2HOR or SE_EQU2HOR
-	  $geopos   Pointer to array of geograph. long., lat., height
+	  $geopos   Array reference for array of geograph. long., lat., height
 	  $atpress  Atmospheric pressure in hPa (mbar)
 	  $attemp   Atmospheric temperature in degree C
-	  $xin      Pointer to array, position of body, either in 
+	  $xin      Array reference for array, position of body, either in 
 	            equatorial or ecliptical polar coordinates, 
 		    depending on $calcflag
-  Output: @aret     azimuth, true altitude, apparent altitude
 
-* $ref = swe_azalt_rev($tjd_ut, $calcflag, $geopos, $atpress, $attemp, $xin);
+  Output: @aret     array of (azimuth, true altitude, apparent altitude)
+
+
+=head2 $ref = swe_azalt_rev($tjd_ut, $calcflag, $geopos, $atpress, $attemp, $xin);
 
   Function transforms azimuth and altitude to either ecliptical or 
   equatorial coordinates.
 
   Input:  $tjd_ut   Julian day number, UT
 	  $calcflag either SE_HOR2ECL or SE_HOR2EQU
-	  $geopos   Pointer to array of geograph. long., lat., height
-	  $xin      Pointer to array, azimuth and true altitude
+	  $geopos   Array reference for array of geograph. long., lat., height
+	  $xin      Array reference for array, azimuth and true altitude
+
   Output: @aret     either ecliptical or equatorial coordinates
   
-=head2 Astrological Houses
 
-* $ref = swe_houses($tjd_ut, $geolat, $geolon, $hsys);
+=head1 Astrological Houses
+
+
+=head2 $ref = swe_houses($tjd_ut, $geolat, $geolon, $hsys);
   
   Function calculates the astrological houses and related stuff.
+
   Input:  $tjd_ut  Julian day number in UT
           $geolat  Geographical latitude
           $geolon  Geographical longitude
           $hsys    House system, a 1-char string; defaults to Placidus
 	           (For more information, read the Swiss Ephemeris
 		   Programmer's Manual.)
-  Output: $ref     Pointer to a hash, which contains:
-          ->cusps  Pointer to an array: the twelve houses (cusps[1..12]).
-          ->ascmc  Pointer to an array: See the Programmer's Manual.
+
+  Output: $ref     hash reference, which contains:
+
+          ->cusps  Array reference for an array: the twelve houses (cusps[1..12]).
+          ->ascmc  Array reference for an array: See the Programmer's Manual.
 	  ->asc    Ascendant
 	  ->mc     Midheaven (Medium Coeli)
 	  ->armc   Right ascension of the midheaven
@@ -1406,65 +1614,79 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  ->coasc2 "co-ascendant 2" (M. Munkasey)
 	  ->polasc "polar ascendant" (M. Munkasey)
 
-* $ref = swe_houses_ex($tjd_ut, $iflag, $geolat, $geolon, $hsys);
+
+=head2 $ref = swe_houses_ex($tjd_ut, $iflag, $geolat, $geolon, $hsys);
   
   Function calculates the astrological houses and related stuff.
   The only difference from swe_houses( ) is that it has an
   additional input parameter $iflag, which allows for the calculation
   of houses for sidereal zodiacs. Set $iflag |= SEFLG_SIDEREAL.
 
-* $ref = swe_houses_ex2($tjd_ut, $iflag, $geolat, $geolon, $hsys);
+=head2 $ref = swe_houses_ex2($tjd_ut, $iflag, $geolat, $geolon, $hsys);
   
   Like swe_houses_ex(), this function calculates the astrological houses and related stuff.
   The difference from swe_houses_ex( ) is that it provides the following
+
   additional output:
           ->retval       0 if OK and -1 if error
           ->serr         error message or warning, by default undefined
-          ->cusps_speed  Pointer to an array: speeds of twelve house cusps
-          ->ascmc_speed  Pointer to an array: See the Programmer's Manual.
+          ->cusps_speed  Array reference for an array: speeds of twelve house cusps
+          ->ascmc_speed  Array reference for an array: See the Programmer's Manual.
 
-* $ref = swe_houses_armc($tjd_ut, $geolat, $geolon, $hsys);
+
+=head2 $ref = swe_houses_armc($tjd_ut, $geolat, $geolon, $hsys);
 
   Function calculates the astrological houses and related stuff, if 
   a date is not given, but a latitude and the right ascension of the
   midheaven.
+
   Input:  $armc    Right ascension of the Midheaven
           $geolat  Geographical latitude
           $eps     Obliquity of true ecliptic of date
           $hsys    House system, a 1-char string; cf. swe_houses( )
+
   Output: same as with swe_houses( )
 
-* $ref = swe_houses_armc_ex2($tjd_ut, $geolat, $geolon, $hsys);
+
+=head2 $ref = swe_houses_armc_ex2($tjd_ut, $geolat, $geolon, $hsys);
 
   Function does the same as swe_houses_armc_ex(), however 
+
   provides the following additional output:
+
           ->retval       0 if OK and -1 if error
           ->serr         error message or warning, by default undefined
-          ->cusps_speed  Pointer to an array: speeds of twelve house cusps
-          ->ascmc_speed  Pointer to an array: See the Programmer's Manual.
+          ->cusps_speed  Array reference for an array: speeds of twelve house cusps
+          ->ascmc_speed  Array reference for an array: See the Programmer's Manual.
 
-* $ref = swe_house_pos($armc, $geolat, $eps, $hsys, $ecl_lon, $ecl_lat);
+
+=head2 $ref = swe_house_pos($armc, $geolat, $eps, $hsys, $ecl_lon, $ecl_lat);
 
   Function calculates the astrological house position of a planet or 
   other celestial point. 
+
   Input:  $armc    Right ascension of the Midheaven
           $geolat  Geographical latitude
           $eps     Obliquity of true ecliptic of date
           $hsys    House system, a 1-char string; cf. swe_houses( )
           $ecl_lon ecliptic longitude of body
           $ecl_lat ecliptic latitude of body
-  Output: $ref     Pointer to a hash, which contains:
+
+  Output: $ref     hash reference, which contains:
+
           ->ihno   house number, integer
 	  ->dhpos  house position, decimal between 1.0 and 12.9999
 	  ->dhpos_deg  house position, degrees, between 0° and 359.9999°
 	  ->serr   error string, on error only
 
-* $hnam = swe_house_name($hsys);
+
+=head2 $hnam = swe_house_name($hsys);
 
   Function returns the name of the house method.
   Input:  $hsys    House system, a 1-char string; cf. swe_houses( )
 
-* $ref = swe_gauquelin_sector($tjd_ut, $ipl, $star, $iflag, $imeth, $geopos, $atpress, $attemp);
+
+=head2 $ref = swe_gauquelin_sector($tjd_ut, $ipl, $star, $iflag, $imeth, $geopos, $atpress, $attemp);
 
   Function calculates the Gauquelin sector position of a planet or other
   object.
@@ -1478,18 +1700,22 @@ exports all constants required for the use of the Swiss Ephemeris.
 	       1    use Placidus house posiition (with planetary lat = 0)
 	       2    use rise and set of body's disc center
 	       3    use rise and set of body's disc center with refraction
-	  $geopos   Pointer to array of geograph. long., lat., height
+	  $geopos   Array reference for array of geograph. long., lat., height
 	  $atpress  Atmospheric pressure in hPa (mbar)
 	  $attemp   Atmospheric temperature in degree C
-  Output: $ref      Pointer to a hash, which contains:
+
+  Output: $ref      hash reference, which contains:
+
           ->retval  OK or ERR
 	  ->serr    Error string, on error only
 	  ->dsector Gauquelin sector position of object
 	  ->starname Star name, corrected
 
-=head2 Refraction
 
-* $outalt = swe_refrac($inalt, $atpress, $attemp, $calcflag);
+=head1 Refraction
+
+
+=head2 $outalt = swe_refrac($inalt, $atpress, $attemp, $calcflag);
 
   Function calculates true altitude from apparent altitude or
   apparent altitude from true altitude.
@@ -1499,12 +1725,14 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  $atpress  Atmospheric pressure in hPa (mbar)
 	  $attemp   Atmospheric temperature in degree C
 	  $calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
+
   Output: $outalt   either apparent or true altitude of the planet,
                     depending on $calcflag
 
   For more detailed information, read the C Programmer's Manual.
 
-* $ref = swe_refrac_extended($inalt, $geoalt, $atpress, $attemp, $lapserate, $calcflag);
+
+=head2 $ref = swe_refrac_extended($inalt, $geoalt, $atpress, $attemp, $lapserate, $calcflag);
 
   Function calculates true altitude from apparent altitude or
   apparent altitude from true altitude.
@@ -1518,10 +1746,12 @@ exports all constants required for the use of the Swiss Ephemeris.
 	  $attemp   Atmospheric temperature in degree C
 	  $lapserate (dT/dh) [°K/m]
 	  $calcflag either SE_CALC_APP_TO_TRUE or SE_CALC_TRUE_TO_APP
-  Output: $ref      Pointer to a hash, which contains:
+
+  Output: $ref      hash reference, which contains:
+
           ->retval  OK or ERR
 	  ->serr    Error string, on error only
-	  ->dret    Pointer to an array which contains the values of
+	  ->dret    Array reference for an array which contains the values of
 	            the following hash members:
 	  ->alt_true 
 	  ->alt_apparent 
@@ -1530,9 +1760,11 @@ exports all constants required for the use of the Swiss Ephemeris.
 
   For more detailed information, read the C Programmer's Manual.
 
-=head2 Heliacal Phenomena
+
+=head1 Heliacal Phenomena
   
-* $ref = swe_heliacal_ut($tjd_start, $dgeo, $datm, $dobs, $objname, $type_event, $iflag)
+
+=head2 $ref = swe_heliacal_ut($tjd_start, $dgeo, $datm, $dobs, $objname, $type_event, $iflag)
 
   Function calls mornig first, morning last, evening first, or 
   evening last of a planet or fixed star.
@@ -1558,7 +1790,8 @@ exports all constants required for the use of the Swiss Ephemeris.
                         (for more info, please read the Swiss Ephemeris
                         Programmer's Manual swephprg.doc)
 
-  Output: $ref      Pointer to a hash, which contains:
+  Output: $ref      hash reference, which contains:
+
           ->retval      OK or ERR
 	  ->serr        error or warning message
           ->tstart      start of visibility (jd)
@@ -1566,14 +1799,16 @@ exports all constants required for the use of the Swiss Ephemeris.
           ->tend        end of visibility (jd)
 	  ->dret        array of doubles, contains tstart, topt, tend.
 
-* $ref = swe_vis_limit_mag($tjd_start, $dgeo, $datm, $dobs, $objname, $iflag)
+
+=head2 $ref = swe_vis_limit_mag($tjd_start, $dgeo, $datm, $dobs, $objname, $iflag)
 
   Function calculates magnitude limit for observation of a body under
   the specified conditions.
 
   Input:  same as with swe_heliacal_ut(), but type_event is missing.
 
-  Output: $ref        Pointer to a hash, which contains:
+  Output: $ref        hash reference, which contains:
+
           ->retval    can have the following values:
                       -2        Object is below the horizon
                       -1 (ERR)  Error
@@ -1592,45 +1827,46 @@ exports all constants required for the use of the Swiss Ephemeris.
 	              - magnitude limit
 		      - altitudes and azimuts of object, Sun, and Moon.
   
-=head2 Normalisation to 360° and Angles between Ecliptic Points
 
-* $ddeg = swe_degnorm($ddeg);
+=head1 Normalisation to 360° and Angles between Ecliptic Points
+
+=head2 $ddeg = swe_degnorm($ddeg);
 
   Function normalises a value, which is <0° or >360° to a value between
   0° and 360°.
 
-* $drad = swe_radnorm($drad);
+=head2 $drad = swe_radnorm($drad);
 
   Function normalises a value, which is <0 or >2PI to a value between
   0 and 2PI.
 
-* $ddeg = swe_difdegn($ddeg1, $ddeg2);
+=head2 $ddeg = swe_difdegn($ddeg1, $ddeg2);
 
   Function returns the swe_degnorm($deg1 - ddeg2).
 
-* $ddeg = swe_difdegn($ddeg1, $ddeg2);
+=head2 $ddeg = swe_difdegn($ddeg1, $ddeg2);
 
   Function returns the swe_degnorm($deg1 - ddeg2).
 
-* $ddeg = swe_difdeg2n($ddeg1, $ddeg2);
+=head2 $ddeg = swe_difdeg2n($ddeg1, $ddeg2);
 
   Function returns the angle distance of $ddeg1 from $ddeg 2 as
   a value between -180° and +180°.
 
-* $drad = swe_difrad2n($drad1, $drad2);
+=head2 $drad = swe_difrad2n($drad1, $drad2);
 
   Function returns the angle distance of $drad1 from $drad 2 as
   a value between -PI and +PI.
 
-* $ddeg = swe_deg_midp($ddeg1, $ddeg2);
+=head2 $ddeg = swe_deg_midp($ddeg1, $ddeg2);
 
   Function returns the midpoint between the two positions.
 
-* $drad = swe_rad_midp($drad1, $drad2);
+=head2 $drad = swe_rad_midp($drad1, $drad2);
 
   Function returns the midpoint between the two positions, in radians.
 
-* $ref swe_split_deg($ddeg, $splitflag);
+=head2 $ref swe_split_deg($ddeg, $splitflag);
 
   Function returns a hash with fields ideg, imin, isec, dfrc, isgn
   splitflag 
