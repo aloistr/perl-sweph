@@ -1,13 +1,11 @@
-Changes
 Makefile.PL
 MANIFEST
 ppport.h
 sweodef.h
 swephexp.h
-README
+README.md
+LICENSE
 SwissEph.xs
 t/SwissEph.t
 lib/SwissEph.pm
 blib/arch/auto/SwissEph/SwissEph.so
-fix_selinux
-/usr/local/lib64/swe/libswe.so.2.10.01
