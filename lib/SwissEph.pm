@@ -1028,15 +1028,16 @@ Function calculates the position of a planet or asteroid, relative to a center o
 
 =head1 Crossings of Sun, Moon, helipcentric planets 
 
-=head2 $ref = swe_solcross($x2cross, $jd0, $iflag)
+
+=head2 $ref = swe_solcross($x2cross, $jd_et, $iflag)
 
 Function computes Sun'scrossing over some longitude
 
 =head3 Input:
 
 	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
-	$jd0     start data (ephemeris time)
-	$iflag   Calculation specifications, for example
+	$jd_et    start date (ephemeris time)
+	$iflag    Calculation specifications, for example
 		SEFLG_HELCTR (crossing of Earth instead of Sun)
 		SEFLG_TRUEPOS
 		SEFLG_NONUT
@@ -1045,8 +1046,31 @@ Function computes Sun'scrossing over some longitude
 =head3 Output: $ref     hash reference, which contains:
 
 	-> jx    crossing time,if no error
+	-> retval	OK or ERR
 	-> serr  Error string, on error only
 	
+
+=head2 $ref = swe_solcross_ut($x2cross, $jd_ut, $iflag)
+
+Function computes Sun'scrossing over some longitude
+
+=head3 Input:
+
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd_ut    start date (Universal time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
 =head1 Positions of Fixed Stars
 
 =head2 $ref = swe_fixstar($star, $tjd_et, $iflag);
