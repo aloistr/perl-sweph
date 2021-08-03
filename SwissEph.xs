@@ -995,6 +995,54 @@ CODE:
 OUTPUT:
   RETVAL
 
+HV *
+swe_solcross(x2cross, jd0, iflag)
+  double x2cross
+  double jd0
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_solcross(x2cross, jd0, iflag,serr);
+  if (*serr != '\0' || jx < jd0) {
+    retval = ERR;
+    (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_solcross_ut(x2cross, jd_ut, iflag)
+  double x2cross
+  double jd_ut
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_solcross_ut(x2cross, jd_ut, iflag,serr);
+  if (*serr != '\0' || jx < jd_ut) {
+    retval = ERR;
+    (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
  # fixstar
  # input:  $star, $tjd, $iflag
  # output: $hp = {retval =>,   

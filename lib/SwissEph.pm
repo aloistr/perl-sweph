@@ -60,7 +60,7 @@ use warnings;
 
 require Exporter;
 
-our $VERSION = "2.10.01";
+our $VERSION = "2.10.02";
 
 our @ISA = qw(Exporter);
 
@@ -78,19 +78,24 @@ our @SWE_FUNCTIONS = qw(
 	swe_get_library_path swe_get_orbital_elements swe_orbit_max_min_true_distance
 	swe_get_planet_name swe_get_tid_acc
 	swe_heliacal_ut swe_heliacal_pheno_ut swe_vis_limit_mag
+	swe_helio_cross swe_helio_cross_ut
 	swe_houses swe_houses_armc swe_houses_ex swe_houses_armc_ex2 swe_houses_ex2
 	swe_house_pos swe_julday 
 	swe_house_name
 	swe_lat_to_lmt swe_lmt_to_lat
 	swe_lun_eclipse_when swe_lun_eclipse_when_loc swe_lun_eclipse_how
 	swe_lun_occult_when_glob swe_lun_occult_when_loc 
-	swe_lun_occult_where swe_nod_aps swe_nod_aps_ut swe_pheno swe_pheno_ut 
+	swe_lun_occult_where
+	swe_mooncross swe_mooncross_ut
+	swe_mooncross_node swe_mooncross_node_ut
+	swe_nod_aps swe_nod_aps_ut swe_pheno swe_pheno_ut 
 	swe_rad_midp swe_radnorm 
 	swe_refrac swe_refrac_extended swe_revjul 
 	swe_rise_trans swe_rise_trans_true_hor
 	swe_set_ephe_path swe_set_jpl_file swe_set_sid_mode
 	swe_set_delta_t_userdef
 	swe_set_tid_acc swe_set_topo swe_sidtime swe_sidtime0
+	swe_solcross swe_solcross_ut
 	swe_sol_eclipse_how swe_sol_eclipse_when_glob 
 	swe_sol_eclipse_when_loc swe_sol_eclipse_where swe_time_equ
         swe_utc_time_zone
@@ -1021,6 +1026,27 @@ Function calculates the position of a planet or asteroid, relative to a center o
   Function returns the name of the ayanamsa.
 
 
+=head1 Crossings of Sun, Moon, helipcentric planets 
+
+=head2 $ref = swe_solcross($x2cross, $jd0, $iflag)
+
+Function computes Sun'scrossing over some longitude
+
+=head3 Input:
+
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd0     start data (ephemeris time)
+	$iflag   Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> serr  Error string, on error only
+	
 =head1 Positions of Fixed Stars
 
 =head2 $ref = swe_fixstar($star, $tjd_et, $iflag);
