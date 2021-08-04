@@ -1,6 +1,6 @@
 # SwissEph Perl module
 
-version 2.10.01
+version 2.10.02
 
 ## Introduction
 
@@ -30,7 +30,7 @@ which has to be at leastof the same release version as the Perl module.
 
 You should download the source code from its Github repo https://github.com/aloistr/swisseph
 or from the download directory  https://www.astro.com/ftp/swisseph/
-Download  swe_unix_src_2.10.tar.gz or whatever the latest version is, or the one you want to use.
+Download  swe_unix_src_2.10.02.tar.gz or whatever the latest version is, or the one you want to use.
 
 There will be a src directory in the unpacked files. Go there and run
   make libswe.so
