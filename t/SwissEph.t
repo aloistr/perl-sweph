@@ -2,7 +2,7 @@
 # `make test'. After `make install' it should work as `perl SwissEph.t'
 
 
-use Test::More tests => 248;
+use Test::More tests => 272;
 
 BEGIN { use_ok("SwissEph") };
 
@@ -186,6 +186,104 @@ is(round_4($ref->{xx}->[1]), -1.6831, "swe_calc_ut(1900, Venus)->xx[1]");
 is(round_4($ref->{xx}->[2]), 1.4646, "swe_calc_ut(1900, Venus)->xx[2]");
 is(round_4($ref->{xx}->[3]), 1.2435, "swe_calc_ut(1900, Venus)->xx[3]");
 #print STDERR "swe_calc_ut $ref->{xx}->[0] $ref->{xx}->[1]\n";
+
+#------------------------------------------------------------------------
+# Wrapper for swe_solcross function group
+#------------------------------------------------------------------------
+
+$ref = SwissEph::swe_solcross(30.0, 2455334.0, SwissEph::SEFLG_MOSEPH);
+is($ref->{retval}, 0, "swe_solcross(30, 2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_solcross(30, 2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455671.9295, "swe_solcross(30, 2455334.0)");
+
+$ref = SwissEph::swe_solcross_ut(30.0, 2455334.0, SwissEph::SEFLG_MOSEPH);
+is($ref->{retval}, 0, "swe_solcross_ut(30, 2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_solcross_ut(30, 2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455671.9288, "swe_solcross_ut(30, 2455334.0)");
+
+$ref = SwissEph::swe_mooncross(30.0, 2455334.0, SwissEph::SEFLG_MOSEPH);
+is($ref->{retval}, 0, "swe_mooncross(30, 2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_mooncross(30, 2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455356.1541, "swe_mooncross(30, 2455334.0)");
+
+$ref = SwissEph::swe_mooncross_ut(30.0, 2455334.0, SwissEph::SEFLG_MOSEPH);
+is($ref->{retval}, 0, "swe_mooncross_ut(30, 2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_mooncross_ut(30, 2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455356.1533, "swe_mooncross_ut(30, 2455334.0)");
+
+$ref = SwissEph::swe_mooncross_node(2455334.0, SwissEph::SEFLG_SWIEPH);
+is($ref->{retval}, 0, "swe_mooncross_node(2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_mooncross_node(2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455334.1526, "swe_mooncross_node(2455334.0)");
+is(round_4($ref->{xlon}), 102.7334, "swe_mooncross_node(2455334.0)");
+is(round_4($ref->{xlat}), 0, "swe_mooncross_node(2455334.0)");
+
+$ref = SwissEph::swe_mooncross_node_ut(2455334.0, SwissEph::SEFLG_SWIEPH);
+is($ref->{retval}, 0, "swe_mooncross_node_ut(2455334.0)->retval");
+if (exists($ref->{serr})) {
+  print STDERR "swe_mooncross_node_ut(2455334.0)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455334.1518, "swe_mooncross_node_ut(2455334.0)");
+is(round_4($ref->{xlon}), 102.7334, "swe_mooncross_node_ut(2455334.0)");
+is(round_4($ref->{xlat}), 0, "swe_mooncross_node_ut(2455334.0)");
+
+$ref = SwissEph::swe_helio_cross(5, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, 1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross(Jupiter, 30, 2455334.0, 1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455805.7592, "swe_helio_cross(Jupiter, 30, 2455334.0, 1)");
+
+$ref = SwissEph::swe_helio_cross(5, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, -1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross(Jupiter, 30, 2455334.0, -1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2451476.1573, "swe_helio_cross(Jupiter, 30, 2455334.0, -1)");
+
+$ref = SwissEph::swe_helio_cross_ut(5, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, 1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross_ut(Jupiter, 30, 2455334.0, 1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2455805.7584, "swe_helio_cross_ut(Jupiter, 30, 2455334.0, 1)");
+
+$ref = SwissEph::swe_helio_cross_ut(5, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, -1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross_ut(Jupiter, 30, 2455334.0, -1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2451476.1566, "swe_helio_cross_ut(Jupiter, 30, 2455334.0, -1)");
+
+$ref = SwissEph::swe_helio_cross(9, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, 1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross(Pluto, 30, 2455334.0, 1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2486750.2264, "swe_helio_cross(Pluto, 30, 2455334.0, 1)");
+
+$ref = SwissEph::swe_helio_cross(9, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, -1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross(Pluto, 30, 2455334.0, -1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2397486.3147, "swe_helio_cross(Pluto, 30, 2455334.0, -1)");
+
+$ref = SwissEph::swe_helio_cross_ut(9, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, 1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross_ut(Pluto, 30, 2455334.0, 1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2486750.2253, "swe_helio_cross_ut(Pluto, 30, 2455334.0, 1)");
+
+$ref = SwissEph::swe_helio_cross_ut(9, 30, 2455334.0, SwissEph::SEFLG_SWIEPH, -1);
+if ($ref->{retval} < 0) {
+  print STDERR "swe_helio_cross_ut(Pluto, 30, 2455334.0, -1)->serr = $ref->{serr}\n";
+}
+is(round_4($ref->{jx}), 2397486.3146, "swe_helio_cross_ut(Pluto, 30, 2455334.0, -1)");
 
 #------------------------------------------------------------------------
 # Wrapper for swe_fixstar

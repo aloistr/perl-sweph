@@ -1043,6 +1043,156 @@ CODE:
 OUTPUT:
   RETVAL
 
+HV *
+swe_mooncross(x2cross, jd_et, iflag)
+  double x2cross
+  double jd_et
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_mooncross(x2cross, jd_et, iflag,serr);
+  if (*serr != '\0' || jx < jd_et) {
+    retval = ERR;
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_mooncross_ut(x2cross, jd_ut, iflag)
+  double x2cross
+  double jd_ut
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_mooncross_ut(x2cross, jd_ut, iflag,serr);
+  if (*serr != '\0' || jx < jd_ut) {
+    retval = ERR;
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_mooncross_node(jd_et, iflag)
+  double jd_et
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  double xlon, xlat;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_mooncross_node(jd_et, iflag, &xlon, &xlat, serr);
+  if (*serr != '\0' || jx < jd_et) {
+    retval = ERR;
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  (void)hv_store(hp, "xlon", 4, newSVnv(xlon), 0);
+  (void)hv_store(hp, "xlat", 4, newSVnv(xlat), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_mooncross_node_ut(jd_ut, iflag)
+  double jd_ut
+  int iflag
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  double xlon, xlat;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  jx = swe_mooncross_node_ut(jd_ut, iflag, &xlon, &xlat, serr);
+  if (*serr != '\0' || jx < jd_ut) {
+    retval = ERR;
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  (void)hv_store(hp, "xlon", 4, newSVnv(xlon), 0);
+  (void)hv_store(hp, "xlat", 4, newSVnv(xlat), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_helio_cross(ipl, x2cross, jd_et, iflag, dir)
+  int ipl
+  double x2cross
+  double jd_et
+  int iflag
+  int dir
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  retval = swe_helio_cross(ipl, x2cross, jd_et, iflag, dir, &jx, serr);
+  if (retval < 0) {
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
+HV *
+swe_helio_cross_ut(ipl, x2cross, jd_ut, iflag, dir)
+  int ipl
+  double x2cross
+  double jd_ut
+  int iflag
+  int dir
+PREINIT:
+  int retval = 0;
+  double jx = 0;
+  char serr[255];
+  HV* hp;
+CODE:
+  hp = (HV *)sv_2mortal((SV *)newHV());
+  *serr = '\0';
+  retval = swe_helio_cross_ut(ipl, x2cross, jd_ut, iflag, dir, &jx, serr);
+  if (retval < 0) {
+    (void)hv_store(hp, "serr", 4, newSVpvn(serr, strlen(serr)), 0);
+  } 
+  (void)hv_store(hp, "retval", 6, newSViv(retval), 0);
+  (void)hv_store(hp, "jx", 2, newSVnv(jx), 0);
+  RETVAL = hp; 
+OUTPUT:
+  RETVAL
+
  # fixstar
  # input:  $star, $tjd, $iflag
  # output: $hp = {retval =>,   

@@ -1031,7 +1031,7 @@ Function calculates the position of a planet or asteroid, relative to a center o
 
 =head2 $ref = swe_solcross($x2cross, $jd_et, $iflag)
 
-Function computes Sun'scrossing over some longitude
+Function computes Sun's crossing over some longitude
 
 =head3 Input:
 
@@ -1052,7 +1052,7 @@ Function computes Sun'scrossing over some longitude
 
 =head2 $ref = swe_solcross_ut($x2cross, $jd_ut, $iflag)
 
-Function computes Sun'scrossing over some longitude
+Function computes Sun's crossing over some longitude
 
 =head3 Input:
 
@@ -1070,6 +1070,143 @@ Function computes Sun'scrossing over some longitude
 	-> retval	OK or ERR
 	-> serr  Error string, on error only
 	
+
+=head2 $ref = swe_mooncross($x2cross, $jd_et, $iflag)
+
+Function computes Moon's crossing over some longitude
+
+=head3 Input:
+
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd_et    start date (ephemeris time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
+=head2 $ref = swe_mooncross_ut($x2cross, $jd_ut, $iflag)
+
+Function computes Moon'scrossing over some longitude
+
+=head3 Input:
+
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd_ut    start date (Universal time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
+=head2 $ref = swe_mooncross_node($jd_et, $iflag)
+
+Function computes Moon's crossing its true node, i.e. through zero latitude
+
+=head3 Input:
+
+	$jd_et    start date (ephemeris time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> xlon  longitude at crossing time
+	-> xlat  latitude at crossing time (very near zero)
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
+=head2 $ref = swe_mooncross_node_ut($jd_et, $iflag)
+
+Function computes Moon's crossing its true node, i.e. through zero latitude
+
+=head3 Input:
+
+	$jd_ut    start date (universal time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error, Universal time
+	-> xlon  longitude at crossing time
+	-> xlat  latitude at crossing time (very near zero)
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
+=head2 $ref = swe_helio_cross($ipl, $x2cross, $jd_et, $iflag, $dir)
+
+Function computes a planet's heliocentric  crossing over some longitude
+
+=head3 Input:
+
+	$ipl	  planet number
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd_et    start date (ephemeris time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+        $dir	direction of search
+		>= 0	forward in time
+		-1	backward in time
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
+=head2 $ref = swe_helio_cross_ut($ipl, $x2cross, $jd_ut, $iflag, $dir)
+
+Function computes a planet's heliocentric crossing over some longitude, in Universal time
+
+=head3 Input:
+
+	$ipl	  planet number
+	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
+	$jd_ut    start date (Universal time)
+	$iflag    Calculation specifications, for example
+		SEFLG_HELCTR (crossing of Earth instead of Sun)
+		SEFLG_TRUEPOS
+		SEFLG_NONUT
+		SEFLG_EQUATORIAL
+        $dir	direction of search
+		>= 0	forward in time
+		-1	backward in time
+
+=head3 Output: $ref     hash reference, which contains:
+
+	-> jx    crossing time,if no error
+	-> retval	OK or ERR
+	-> serr  Error string, on error only
+	
+
 
 =head1 Positions of Fixed Stars
 
