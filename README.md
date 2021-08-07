@@ -28,7 +28,9 @@ A Perl function can be easily tested from the command line. This makes it very e
 Example: compute Sun position on a given date 7 August 2021, at 14h UT.
 
 ```
-perl -e 'use SwissEph qw(:all); use Data::Dumper qw( Dumper ); swe_set_ephe_path("");$jd = swe_julday(2021, 8, 7, 14.0, SE_GREG_CAL); $r = swe_calc($jd,SE_SUN,SEFLG_SPEED); print Dumper($jd,$r);'
+perl -e 'use SwissEph qw(:all); use Data::Dumper qw( Dumper ); swe_set_ephe_path("");
+         $jd = swe_julday(2021, 8, 7, 14.0, SE_GREG_CAL); $r = swe_calc($jd,SE_SUN,SEFLG_SPEED);
+	 print Dumper($jd,$r);'
 $VAR1 = '2459434.08333333';
 $VAR2 = {
   'retval' => 256,
