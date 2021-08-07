@@ -21,6 +21,33 @@ or, once the module is installed,  with
 
 perldoc -m SwissEph
 
+## Testing from command line
+
+A Perl function can be easily tested from the command line. This makes it very easy to test Swiss Ephemeris functions.
+
+Example: compute Sun position on a given date 7 August 2021, at 14h UT.
+
+```
+perl -e 'use SwissEph qw(:all); use Data::Dumper qw( Dumper ); swe_set_ephe_path("");$jd = swe_julday(2021, 8, 7, 14.0, SE_GREG_CAL); $r = swe_calc($jd,SE_SUN,SEFLG_SPEED); print Dumper($jd,$r);'
+$VAR1 = '2459434.08333333';
+$VAR2 = {
+  'retval' => 256,
+  'xx' =>
+  [
+    '135.282856317952',
+    '0.000158106543899277',
+    '1.01411395214231',
+    '0.958716911125739',
+    '3.00874355692282e-05',
+    '-0.000151345208862028'
+  ]
+};
+
+```
+
+You can do without swe_set_ephepath, and ignore the error message returned.
+
+
 ## Installation
 
 ### On Linux, with dynamical library libswe.so
