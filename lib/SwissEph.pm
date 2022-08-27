@@ -1121,10 +1121,6 @@ Function computes Moon's crossing its true node, i.e. through zero latitude
 
 	$jd_et    start date (ephemeris time)
 	$iflag    Calculation specifications, for example
-		SEFLG_HELCTR (crossing of Earth instead of Sun)
-		SEFLG_TRUEPOS
-		SEFLG_NONUT
-		SEFLG_EQUATORIAL
 
 =head3 Output: $ref     hash reference, which contains:
 
@@ -1143,10 +1139,6 @@ Function computes Moon's crossing its true node, i.e. through zero latitude
 
 	$jd_ut    start date (universal time)
 	$iflag    Calculation specifications, for example
-		SEFLG_HELCTR (crossing of Earth instead of Sun)
-		SEFLG_TRUEPOS
-		SEFLG_NONUT
-		SEFLG_EQUATORIAL
 
 =head3 Output: $ref     hash reference, which contains:
 
@@ -1167,7 +1159,6 @@ Function computes a planet's heliocentric  crossing over some longitude
 	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
 	$jd_et    start date (ephemeris time)
 	$iflag    Calculation specifications, for example
-		SEFLG_HELCTR (crossing of Earth instead of Sun)
 		SEFLG_TRUEPOS
 		SEFLG_NONUT
 		SEFLG_EQUATORIAL
@@ -1192,7 +1183,6 @@ Function computes a planet's heliocentric crossing over some longitude, in Unive
 	$x2cross  ecliptic longitude (or equatorial RA) to be crossed
 	$jd_ut    start date (Universal time)
 	$iflag    Calculation specifications, for example
-		SEFLG_HELCTR (crossing of Earth instead of Sun)
 		SEFLG_TRUEPOS
 		SEFLG_NONUT
 		SEFLG_EQUATORIAL
