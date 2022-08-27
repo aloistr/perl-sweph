@@ -60,7 +60,7 @@ use warnings;
 
 require Exporter;
 
-our $VERSION = "2.10.02";
+our $VERSION = "2.10.03";
 
 our @ISA = qw(Exporter);
 
