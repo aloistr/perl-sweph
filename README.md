@@ -1,6 +1,6 @@
 # SwissEph Perl module
 
-version 2.10.01
+version 2.10.03
 
 ## Introduction
 
