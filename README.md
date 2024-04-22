@@ -108,7 +108,7 @@ on your computer:
 
 - the Swiss Ephemeris DLL swedll32.dll. If haven't done this yet,
   download the Swiss Ephemeris from the download area at 
-  https://www.astro.com/swisseph and unpack it.
+  https://github.com/aloistr/swisseph/tree/master/windows file sweph.zip and unpack it.
 
 - Visual C++ Express Edition, which can be downloaded for free from the
   http://www.microsoft.com/express/download/.
